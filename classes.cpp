@@ -92,9 +92,7 @@ void Voter::submit_vote(const Candidate& candidate){
 }
 
 unsigned int Voter::get_age(){return this->age;}
-
 char* Voter::get_voivodship(){return this->voivodship;}
-
 bool Voter::has_voted(){return this->vote;}
 
 
@@ -106,12 +104,8 @@ void Candidate::vote(){
 
 }
 
-char* Voter::get_name(){
-
-}
-
+char* Voter::get_name(){return this->name;}
 unsigned int& Candidate::ref_support(){return this->support;}
-
 void Candidate::display_voters(){
 
 }
@@ -127,11 +121,30 @@ Voivodship::~Voivodship(){
 }
 
 bool Voivodship::register_voter(Voter* voter){
-
+    if(strcmp(voter->get_voivodship(),this->name)==0 && voter->get_age()>=18){
+        Voters* node=new Voters();
+        node->voter=voter;
+        node->next=nullptr;
+        Voters* temp=this->headV;
+        if(temp==nullptr){
+            this->headV=node;
+        }else {
+            while(temp->next) temp=temp->next;
+            temp->next=node;
+        }
+        while(temp->next) temp=temp->next;
+        temp->next=node;
+        return true;
+    }
+    return false;
 }
 
 void Voivodship::display_registered_voters(){
-
+    Voters* temp=this->headV;
+    while(temp){
+        cout<<temp->voter;
+        temp=temp->next;
+    }
 }
 
 void Voivodship::display_local_support(){
@@ -139,7 +152,13 @@ void Voivodship::display_local_support(){
 }
 
 unsigned int& Voivodship::number_of_voters(){
-
+    unsigned int counter=0;
+    Voters* temp=this->headV;
+    while(temp){
+        counter++;
+        temp=temp->next;
+    }
+    return counter;
 }
 
 unsigned int Voivodship::number_of_citizens(){
