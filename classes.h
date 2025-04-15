@@ -51,12 +51,21 @@ class Voter{
         //Returns the vote submission status.
         bool has_voted();
         //Displays the voters information.
-        void display();
+        friend ostream& operator<<(ostream& os,const Voter& voter);
+        //Returns the name of a voter
+        char* get_name();
+        //Returns the voivodship of voter
+        char* get_voivodship();
 };
 
 //Candidate inherits from Voter class as candidates do have the voting rights, despite part-taking in an election.
 class Candidate:public Voter{
     private:
+        char* name; //Derived from Voter class
+        unsigned int age; //Derived from Voter class
+        bool validity; //Derived from Voter class
+        char* voivodship; //Derived from Voter class
+        bool vote; //Derived from Voter class
         unsigned int support; //Numerical value representing the amount of votes  a candidate has gathered. At creation initialized to zero.
         struct Supporters{ //Singly linked list of voters who submitted the votes on the candidate.
             Voter* voter; //Voter instance.
@@ -67,12 +76,17 @@ class Candidate:public Voter{
         //Constructor for candidate object, inherits from voter instance
         Candidate(const char* name,const unsigned int age, const char* voivodship,const bool vote=false,const bool validity=false,const int support=0): Voter(name, age, voivodship,vote,validity){};
         //Destructor for candidate instance.
-        void vote();
         ~Candidate();
+        //Vote submission, increasing backing
+        void vote();
         //Returns the candidate's support as a reference
         unsigned int& ref_support();
         //Displays all voters that submitted their vote on the candidate.
-        void display_voters();  
+        void display_voters();
+        //Frees the list of supporters
+        void free_supporters(); 
+        //operator<< for candidate information
+        friend ostream& operator<<(ostream& os,const Candidate& candidate); 
 };
 
 class Voivodship{
@@ -97,8 +111,9 @@ class Voivodship{
         //Displays the local support of each candidate in percantages.
         void display_local_support();
         //Returns the number of all registered voters.
-        int number_of_voters();
+        unsigned int& number_of_voters();
         //Returns the number of citizens
-        unsigned int& number_of_citizens();
-
+        unsigned int number_of_citizens();
+        //Frees the singly linked list of voters
+        void free_voters();
 };
