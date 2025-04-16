@@ -1,7 +1,14 @@
+#ifndef CLASSES_H
+#define CLASSES_H
 #include <vector>
+#include <iostream>
 #include <map>
 using namespace std;
 
+class Candidate;
+class Voter;
+class Election;
+class Voivodship;
 
 class Election{
     private:
@@ -32,7 +39,7 @@ class Election{
 };
 
 class Voter{
-    protected:
+    private:
         bool validity;//boolean validity of a voter, indicating registartion status, by default false
         char* name;//Name of a voter.
         unsigned int age;//Age of a voter.
@@ -46,26 +53,21 @@ class Voter{
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
         void submit_vote(Candidate& candidate);
         //Returns the age of a voter.
-        unsigned int get_age();
-        char* get_voivodship();
+        unsigned int get_age()const;
         //Returns the vote submission status.
-        bool has_voted();
+        bool& get_validity();
+        bool& has_voted();
         //Displays the voters information.
         friend ostream& operator<<(ostream& os,const Voter& voter);
         //Returns the name of a voter
-        char* get_name();
+        char* get_name()const;
         //Returns the voivodship of voter
-        char* get_voivodship();
+        char* get_voivodship()const;
 };
 
 //Candidate inherits from Voter class as candidates do have the voting rights, despite part-taking in an election.
 class Candidate:public Voter{
     private:
-        char* name; //Derived from Voter class
-        unsigned int age; //Derived from Voter class
-        bool validity; //Derived from Voter class
-        char* voivodship; //Derived from Voter class
-        bool vote; //Derived from Voter class
         unsigned int support; //Numerical value representing the amount of votes  a candidate has gathered. At creation initialized to zero.
         struct Supporters{ //Singly linked list of voters who submitted the votes on the candidate.
             Voter* voter; //Voter instance.
@@ -74,7 +76,7 @@ class Candidate:public Voter{
         Supporters* headS; //Head of the supporters structure.
     public:
         //Constructor for candidate object, inherits from voter instance
-        Candidate(const char* name,const unsigned int age, const char* voivodship,const bool vote=false,const bool validity=false,const int support=0): Voter(name, age, voivodship,vote,validity){}
+        Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote = false, const bool validity = false, const int support = 0);
         //Destructor for candidate instance.
         ~Candidate();
         //Vote submission, increasing backing
@@ -115,9 +117,13 @@ class Voivodship{
         //Displays the local support of each candidate in percantages.
         void display_local_support();
         //Returns the number of all registered voters.
-        unsigned int& number_of_voters();
+        unsigned int number_of_voters();
         //Returns the number of citizens
         unsigned int number_of_citizens();
         //Frees the singly linked list of voters
         void free_voters();
+        //Constructs a local map for candidates and their backing.
+        void register_candidate(Candidate* candidate);
 };
+
+#endif

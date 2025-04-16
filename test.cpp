@@ -60,9 +60,9 @@ int main(){
     e.register_candidate(c3);
     e.display_registered_candidates(); //Expected information abot c1, c3
     e.distribute_candidates_to_voivodships();
-    c1->vote();
+    c1->submit_vote();
     if(c1->ref_support()!=1) cerr<<"Candidates support not incremented after self vote"<<endl;
-    c1->vote();
+    c1->submit_vote();
     if(c1->ref_support()==2) cerr<<"Candidates vote status not changed after initial self vote"<<endl;
     
     voter1->submit_vote(*c1);
