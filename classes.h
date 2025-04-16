@@ -78,7 +78,7 @@ class Candidate:public Voter{
         //Destructor for candidate instance.
         ~Candidate();
         //Vote submission, increasing backing
-        void vote();
+        void submit_vote();
         //Returns the candidate's support as a reference
         unsigned int& ref_support();
         //Displays all voters that submitted their vote on the candidate.
@@ -108,6 +108,8 @@ class Voivodship{
         bool register_voter(Voter* voter);
         //Displays all registered voters within a voivodship.
         void display_registered_voters();
+        //Iterates thorugh singly linked list and returns
+        bool find(const char* name,const unsigned int age);
         //Displays the local support of each candidate in percantages.
         void display_local_support();
         //Returns the number of all registered voters.
