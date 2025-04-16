@@ -87,8 +87,27 @@ Voter::~Voter(){
     delete[] this->voivodship;
 }
 
-void Voter::submit_vote(const Candidate& candidate){
+void Voter::submit_vote(Candidate& candidate){
+    if(this->validity && !this->vote){
+        candidate.ref_support()++;
+        this->vote=true;
+        candidate.add_supporter(this);
+    }
+}
 
+void Candidate::add_supporter(Voter* voter){
+    Supporters* node=new Supporters();
+    node->voter=voter;
+    node->next=nullptr;
+    Supporters* temp=this->headS;
+    if(temp==nullptr){
+        this->headS=node;
+    }else {
+        while(temp->next) temp=temp->next;
+        temp->next=node;
+    }
+    while(temp->next) temp=temp->next;
+    temp->next=node;
 }
 
 unsigned int Voter::get_age(){return this->age;}
@@ -137,7 +156,21 @@ Voivodship::Voivodship(const char* name, const unsigned int citizens){
 }
 
 Voivodship::~Voivodship(){
+    this->free_voters();
+    this->localVotes.clear();
+}
 
+void Voivodship::free_voters(){
+    Voters* temp=this->headV;
+    Voters* curr=nullptr;
+    while(temp){
+        curr=temp;
+        delete[] curr->voter->get_name();
+        delete[] curr->voter->get_voivodship();
+        delete curr->voter;
+        delete curr;
+        temp=temp->next;
+    }
 }
 
 bool Voivodship::register_voter(Voter* voter){

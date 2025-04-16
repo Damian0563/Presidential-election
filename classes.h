@@ -44,7 +44,7 @@ class Voter{
         //Destructor for voter instance.
         ~Voter();
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
-        void submit_vote(const Candidate& candidate);
+        void submit_vote(Candidate& candidate);
         //Returns the age of a voter.
         unsigned int get_age();
         char* get_voivodship();
@@ -74,7 +74,7 @@ class Candidate:public Voter{
         Supporters* headS; //Head of the supporters structure.
     public:
         //Constructor for candidate object, inherits from voter instance
-        Candidate(const char* name,const unsigned int age, const char* voivodship,const bool vote=false,const bool validity=false,const int support=0): Voter(name, age, voivodship,vote,validity){};
+        Candidate(const char* name,const unsigned int age, const char* voivodship,const bool vote=false,const bool validity=false,const int support=0): Voter(name, age, voivodship,vote,validity){}
         //Destructor for candidate instance.
         ~Candidate();
         //Vote submission, increasing backing
@@ -83,6 +83,8 @@ class Candidate:public Voter{
         unsigned int& ref_support();
         //Displays all voters that submitted their vote on the candidate.
         void display_voters();
+        //Appends a voter to the supporters list.
+        void add_supporter(Voter* voter);
         //Frees the list of supporters
         void free_supporters(); 
         //operator<< for candidate information
