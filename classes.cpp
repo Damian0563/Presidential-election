@@ -113,7 +113,7 @@ void Voivodship::register_candidate(Candidate* candidate){
 
 unsigned int& Election::refAttendance() {return this->counter;}
 
-Voter::Voter(const char* name, const unsigned int age,const char* voivovship,bool vote,const bool validity){
+Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote,const bool validity){
     this->name=new char[strlen(name)+1];
     strcpy(this->name,name);
     this->age=age;
