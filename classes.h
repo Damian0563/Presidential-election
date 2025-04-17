@@ -124,6 +124,8 @@ class Voivodship{
         unsigned int number_of_citizens();
         //Frees the singly linked list of voters
         void free_voters();
+        //Returns the name of the voivodship(private memeber)
+        char* get_name();
         //Constructs a local map for candidates and their backing.
         void register_candidate(Candidate* candidate);
 };

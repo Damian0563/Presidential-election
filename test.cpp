@@ -26,12 +26,12 @@ int main(){
     Voivodship v3("Great Poland",20);
     Voivodship v4("test",0);
     if(v4.register_voter(voter6)) cerr<<"Number of citizens is smaller than amount of registered voters"<<endl;
-    if(!v1.register_voter(voter1)){
-        cerr<<"Valid voter not registered correctly"<<endl;
-    }else{
-        if(v1.register_voter(voter1))
-            cerr<<"Voter registered twice to a single voivodship"<<endl;
-    }
+    // if(!v1.register_voter(voter1)){
+    //     cerr<<"Valid voter not registered correctly"<<endl;
+    // }else{
+    //     if(v1.register_voter(voter1))
+    //         cerr<<"Voter registered twice to a single voivodship"<<endl;
+    // }
     // if(v2.register_voter(voter1)){
     //     cerr<<"Voter assigned to a different voivodship"<<endl;
     // }

@@ -190,7 +190,6 @@ void Candidate::free_supporters(){
     while (current!=nullptr) {
         Supporters* temp=current;
         current=current->next;
-        delete temp->voter;
         delete temp;
     }
     headS=nullptr;
@@ -235,8 +234,6 @@ void Voivodship::free_voters(){
     Voters* curr=nullptr;
     while(temp){
         curr=temp;
-        delete[] curr->voter->get_name();
-        delete[] curr->voter->get_voivodship();
         delete curr->voter;
         delete curr;
         temp=temp->next;
@@ -244,8 +241,8 @@ void Voivodship::free_voters(){
 }
 
 bool Voivodship::register_voter(Voter* voter){
-    if(!this->find(voter->get_name(),voter->get_age()) && this->number_of_citizens()>this->number_of_voters()){
-        if(strcmp(voter->get_voivodship(),this->name)==0 && voter->get_age()>=18){
+    if(this->find(voter->get_name(),voter->get_age())==false && this->number_of_citizens()>=this->number_of_voters()+1){
+        if(strcmp(voter->get_voivodship(),this->get_name())==0 && voter->get_age()>=18){
             Voters* node=new Voters();
             node->voter=voter;
             node->next=nullptr;
@@ -259,10 +256,10 @@ bool Voivodship::register_voter(Voter* voter){
             return true;
         }
     }
-    cout<<this->find(voter->get_name(),voter->get_age())<<endl;
-    cout<<this->number_of_citizens()<<this->number_of_voters();
     return false;
 }
+
+char* Voivodship::get_name(){return this->name;}
 
 void Voivodship::display_registered_voters(){
     Voters* temp=this->headV;
