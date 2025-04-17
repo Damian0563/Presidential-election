@@ -24,8 +24,6 @@ Election::~Election(){
 }
 
 Candidate::~Candidate(){
-    delete[] this->get_name();
-    delete[] this->get_voivodship();
     this->free_supporters();
 }
 
@@ -225,26 +223,14 @@ Voivodship::Voivodship(const char* name, const unsigned int citizens){
 }
 
 Voivodship::~Voivodship(){
-    this->free_voters();
     this->localVotes.clear();
-}
-
-void Voivodship::free_voters(){
-    Voters* temp=this->headV;
-    Voters* curr=nullptr;
-    while(temp){
-        curr=temp;
-        delete curr->voter;
-        delete curr;
-        temp=temp->next;
-    }
 }
 
 bool Voivodship::register_voter(Voter* voter){
     if(this->find(voter->get_name(),voter->get_age())==false && this->number_of_citizens()>=this->number_of_voters()+1){
         if(strcmp(voter->get_voivodship(),this->get_name())==0 && voter->get_age()>=18){
             Voters* node=new Voters();
-            node->voter=voter;
+            node->voter=new Voter(*voter);
             node->next=nullptr;
             Voters* temp=this->headV;
             if(temp==nullptr){
@@ -259,14 +245,26 @@ bool Voivodship::register_voter(Voter* voter){
     return false;
 }
 
+Voter::Voter(const Voter& voter){
+    this->name=new char[strlen(voter.name)+1];
+    strcpy(this->name,voter.name);
+    this->voivodship=new char[strlen(voter.voivodship)+1];
+    strcpy(this->voivodship,voter.voivodship);
+    this->age=voter.age;
+    this->validity=voter.validity;
+    this->vote=voter.vote;
+}
+
 char* Voivodship::get_name(){return this->name;}
 
 void Voivodship::display_registered_voters(){
+    if(this->headV==nullptr) cout<<"No registered voters for: "<<this->get_name()<<endl;
     Voters* temp=this->headV;
     while(temp){
-        cout<<temp->voter;
+        cout<<*(temp->voter);
         temp=temp->next;
     }
+    cout<<endl;
 }
 
 bool Voivodship::find(const char* name, const unsigned int age) {
@@ -301,13 +299,7 @@ unsigned int Voivodship::number_of_voters(){
 }
 
 unsigned int Voivodship::number_of_citizens(){
-    unsigned int counter=0;
-    Voters* temp=this->headV;
-    while(temp){
-        counter++;
-        temp=temp->next;
-    }
-    return counter;
+    return this->citizens;
 }
 
 ostream& operator<<(ostream& os,const Voter& voter){

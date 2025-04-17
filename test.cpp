@@ -25,28 +25,28 @@ int main(){
     Voivodship v2("Lesser Poland",40);
     Voivodship v3("Great Poland",20);
     Voivodship v4("test",0);
-    if(v4.register_voter(voter6)) cerr<<"Number of citizens is smaller than amount of registered voters"<<endl;
-    // if(!v1.register_voter(voter1)){
-    //     cerr<<"Valid voter not registered correctly"<<endl;
-    // }else{
-    //     if(v1.register_voter(voter1))
-    //         cerr<<"Voter registered twice to a single voivodship"<<endl;
-    // }
-    // if(v2.register_voter(voter1)){
-    //     cerr<<"Voter assigned to a different voivodship"<<endl;
-    // }
-    // if(v2.register_voter(voter4)){
-    //     cerr<<"Voter of age<18 registered successfully"<<endl;
-    // }
-    // v2.register_voter(voter2);
-    // v3.register_voter(voter5);
-    // if(v1.number_of_voters()!=1) cerr<<"Invalid number of voters in v1"<<endl;
-    // if(v2.number_of_voters()!=1) cerr<<"Invalid number of voters in v2"<<endl;
-    // if(v3.number_of_voters()!=1) cerr<<"Invalid number of voters in v3"<<endl;
+    //if(v4.register_voter(voter6)) cerr<<"Number of citizens is smaller than amount of registered voters"<<endl;
+    if(!v1.register_voter(voter1)){
+        cerr<<"Valid voter not registered correctly"<<endl;
+    }else{
+        if(v1.register_voter(voter1))
+            cerr<<"Voter registered twice to a single voivodship"<<endl;
+    }
+    if(v2.register_voter(voter1)){
+        cerr<<"Voter assigned to a different voivodship"<<endl;
+    }
+    if(v2.register_voter(voter4)){
+        cerr<<"Voter of age<18 registered successfully"<<endl;
+    }
+    v2.register_voter(voter2);
+    v3.register_voter(voter5);
+    if(v1.number_of_voters()!=1) cerr<<"Invalid number of voters in v1"<<endl;
+    if(v2.number_of_voters()!=1) cerr<<"Invalid number of voters in v2"<<endl;
+    if(v3.number_of_voters()!=1) cerr<<"Invalid number of voters in v3"<<endl;
 
-    // v1.display_registered_voters(); //Expected information of voter1
-    // v2.display_registered_voters(); //Expected information of voter2
-    // v3.display_registered_voters(); //Expected information of voter5
+    v1.display_registered_voters(); //Expected information of voter1
+    v2.display_registered_voters(); //Expected information of voter2
+    v3.display_registered_voters(); //Expected information of voter5
     // vector<Voivodship> voivodships={v1,v2,v3};
     // Election e(voivodships);
     // Candidate* c1=new Candidate("Tim Cheese",36,"Masovian");

@@ -47,9 +47,11 @@ class Voter{
         char* voivodship;//Name of a voivodship the voter lives in.
     public:
         //Constructor of voter, taking up the private variables. The vote submission status is assumed to be false at object creation.
-        Voter(const char* name, const unsigned int age,const char* voivovship,bool vote=false,const bool validity=false);
+        Voter(const char* name, const unsigned int age,const char* voivodship,bool vote=false,const bool validity=false);
         //Destructor for voter instance.
         ~Voter();
+        //Copy contrcutor for voter instance
+        Voter(const Voter& voter);
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
         void submit_vote(Candidate& candidate);
         //Returns the age of a voter.
@@ -122,8 +124,6 @@ class Voivodship{
         unsigned int number_of_voters();
         //Returns the number of citizens
         unsigned int number_of_citizens();
-        //Frees the singly linked list of voters
-        void free_voters();
         //Returns the name of the voivodship(private memeber)
         char* get_name();
         //Constructs a local map for candidates and their backing.
