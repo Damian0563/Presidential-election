@@ -57,7 +57,8 @@ class Voter{
         //Returns the age of a voter.
         unsigned int get_age()const;
         //Returns the vote submission status.
-        bool& get_validity();
+        bool& refValidity();
+        //Displays the voting status
         bool& has_voted();
         //Displays the voters information.
         friend ostream& operator<<(ostream& os,const Voter& voter);
@@ -65,6 +66,7 @@ class Voter{
         char* get_name()const;
         //Returns the voivodship of voter
         char* get_voivodship()const;
+
 };
 
 //Candidate inherits from Voter class as candidates do have the voting rights, despite part-taking in an election.

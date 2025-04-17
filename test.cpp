@@ -36,7 +36,7 @@ int main(){
         cerr<<"Voter assigned to a different voivodship"<<endl;
     }
     if(v2.register_voter(voter4)){
-        cerr<<"Voter of age<18 registered successfully"<<endl;
+        cerr<<"Voter of age<18 registered successfully RESTRICTION R1"<<endl;
     }
     v2.register_voter(voter2);
     v3.register_voter(voter5);
@@ -47,27 +47,28 @@ int main(){
     v1.display_registered_voters(); //Expected information of voter1
     v2.display_registered_voters(); //Expected information of voter2
     v3.display_registered_voters(); //Expected information of voter5
-    // vector<Voivodship> voivodships={v1,v2,v3};
-    // Election e(voivodships);
-    // Candidate* c1=new Candidate("Tim Cheese",36,"Masovian");
-    // Candidate* c2=new Candidate("John Pork",34,"Lesser Poland");
-    // Candidate* c3=new Candidate("Tiger Sam",40,"Great Poland");
-    // if(!e.register_candidate(c1)){
-    //     cerr<<"Valid candidate not registered successfully"<<endl;
-    // }if(e.register_candidate(c2)){
-    //     cerr<<"Candidate with invalid age registered successfully"<<endl;
-    // }
-    // e.register_candidate(c3);
-    // e.display_registered_candidates(); //Expected information abot c1, c3
-    // e.distribute_candidates_to_voivodships();
-    // c1->submit_vote();
-    // if(c1->ref_support()!=1) cerr<<"Candidates support not incremented after self vote"<<endl;
-    // c1->submit_vote();
-    // if(c1->ref_support()==2) cerr<<"Candidates vote status not changed after initial self vote"<<endl;
+    vector<Voivodship> voivodships={v1,v2,v3};
+    Election e(voivodships);
+    Candidate* c1=new Candidate("Tim Cheese",36,"Masovian");
+    Candidate* c2=new Candidate("John Pork",34,"Lesser Poland");
+    Candidate* c3=new Candidate("Tiger Sam",40,"Great Poland");
+    if(!e.register_candidate(c1)){
+        cerr<<"Valid candidate not registered successfully"<<endl;
+    }if(e.register_candidate(c2)){
+        cerr<<"Candidate with invalid age registered successfully RESTRICTION R4"<<endl;
+    }
+    e.register_candidate(c3);
+    e.display_registered_candidates(); //Expected information abot c1, c3
+    e.distribute_candidates_to_voivodships();
+
+    c1->submit_vote();
+    if(c1->ref_support()!=1) cerr<<"Candidates support not incremented after self vote"<<endl;
+    c1->submit_vote();
+    if(c1->ref_support()==2) cerr<<"Candidates vote status not changed after initial self vote"<<endl;
     
-    // voter1->submit_vote(*c1);
-    // if(c1->ref_support()!=2) cerr<<"Invalid support of candidate c1 after valid Voter vote cast"<<endl;
-    // v1.display_local_support(); //Expected: Masovian: Tim Cheese: 100%
+    voter1->submit_vote(*c1);
+    if(c1->ref_support()!=2) cerr<<"Invalid support of candidate c1 after valid Voter vote cast"<<endl;
+    v1.display_local_support(); //Expected: Masovian: Tim Cheese: 100% Tiger Sam 0%
     // voter2->submit_vote(*c3);
     // v2.display_local_support(); //Expected: Lesser Poland: Tiger Sam: 100%
     // voter5->submit_vote(*c1);

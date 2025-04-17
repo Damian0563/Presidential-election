@@ -12,14 +12,6 @@ Election::Election(const vector<Voivodship>& voivodship,const unsigned int count
 }
 
 Election::~Election(){
-    Candidates* temp=this->headC;
-    Candidates* prev=nullptr;
-    while(temp){
-        prev=temp;
-        delete prev->candidate;
-        delete prev;
-        temp=temp->next;
-    }
     this->headC=nullptr;
 }
 
@@ -89,6 +81,7 @@ bool Election::register_candidate(Candidate* candidate) {
     if(candidate->get_age()>=35){
         Candidates* newNode = new Candidates();
         newNode->candidate = candidate;
+        newNode->candidate->refValidity()=true;
         newNode->next = nullptr;
         if(this->headC == nullptr) this->headC = newNode;
         else{
@@ -104,7 +97,8 @@ bool Election::register_candidate(Candidate* candidate) {
 }
 
 ostream& operator<<(ostream& os, const Candidate& candidate) {
-    os << "Candidate Name: " << candidate.get_name() << "\n"
+    os <<"\n"
+       << "Candidate Name: " << candidate.get_name() << "\n"
        << "Age: " << candidate.get_age()<< "\n"
        << "Voivodship: " << candidate.get_voivodship() << "\n"
        << "Support: " << candidate.support << "\n";
@@ -114,7 +108,7 @@ ostream& operator<<(ostream& os, const Candidate& candidate) {
 void Election::display_registered_candidates(){
     Candidates* temp=this->headC;
     while(temp){
-        cout<<temp->candidate;
+        cout<<*(temp->candidate);
         temp=temp->next;
     }
 }
@@ -156,7 +150,7 @@ Voter::~Voter(){
 void Voter::submit_vote(Candidate& candidate){
     if(this->validity && !this->vote){
         candidate.ref_support()++;
-        this->vote=true;
+        this->has_voted()=true;
         candidate.add_supporter(this);
     }
 }
@@ -193,10 +187,10 @@ void Candidate::free_supporters(){
     headS=nullptr;
 }
 
-bool& Voter::get_validity(){return this->validity;}
+bool& Voter::refValidity(){return this->validity;}
 
 void Candidate::submit_vote(){
-    if(this->get_validity() && !this->has_voted()){
+    if(this->refValidity() && !this->has_voted()){
         ref_support()++;
         this->has_voted()=true;
     }
@@ -212,7 +206,7 @@ void Candidate::display_voters(){
         cout<<temp->voter;
         temp=temp->next;
     }
-    if(this->get_validity() && this->has_voted()) cout<<this; //Case when president self-voted 
+    if(this->refValidity() && this->has_voted()) cout<<this; //Case when president self-voted 
 }
 
 Voivodship::Voivodship(const char* name, const unsigned int citizens){
@@ -230,7 +224,9 @@ bool Voivodship::register_voter(Voter* voter){
     if(this->find(voter->get_name(),voter->get_age())==false && this->number_of_citizens()>=this->number_of_voters()+1){
         if(strcmp(voter->get_voivodship(),this->get_name())==0 && voter->get_age()>=18){
             Voters* node=new Voters();
-            node->voter=new Voter(*voter);
+            //node->voter=new Voter(*voter);
+            node->voter=voter;
+            node->voter->refValidity()=true;
             node->next=nullptr;
             Voters* temp=this->headV;
             if(temp==nullptr){
