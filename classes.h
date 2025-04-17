@@ -13,7 +13,7 @@ class Voivodship;
 class Election{
     private:
         unsigned int counter; //Integer variable storing the amount of all votes.
-        vector<Voivodship> voivodships; //Vector containing Voivodship objects. It is meant for determining the election winner as well the support in respect to group age.
+        vector<Voivodship*> voivodships; //Vector containing Voivodship objects. It is meant for determining the election winner as well the support in respect to group age.
         struct Candidates{  //Singly linked list of Candidate objects.
             Candidate* candidate; //Candidate object.
             Candidates* next; //Next Candidate instance.
@@ -21,7 +21,7 @@ class Election{
         Candidates* headC; //Head of the singly linked list for candidates.
     public:
         //Constructor for the election, the counter(amount of all votes) is assumed to be zero initially, takes the vector of voivodship objects as an argument as well.
-        Election(const vector<Voivodship>& voivodship,const unsigned int counter=0); 
+        Election(const vector<Voivodship*> voivodship,const unsigned int counter=0); 
         //Destructor for Election class.
         ~Election();
         //Determines an election winner and displays total support of each candidate in percantages.

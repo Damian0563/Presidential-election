@@ -5,7 +5,7 @@
 #include <cstring>
 using namespace std;
 
-Election::Election(const vector<Voivodship>& voivodship,const unsigned int counter){
+Election::Election(const vector<Voivodship*> voivodship,const unsigned int counter){
     this->voivodships=voivodship;
     this->counter=counter;
     this->headC=nullptr;
@@ -118,7 +118,7 @@ void Election::distribute_candidates_to_voivodships(){
     while(temp){
         Candidate* candidate=temp->candidate;
         for(auto& voivodship: voivodships){
-            voivodship.register_candidate(candidate);
+            voivodship->register_candidate(candidate);
         }
         temp=temp->next;
     }
@@ -275,12 +275,15 @@ bool Voivodship::find(const char* name, const unsigned int age) {
 }
 
 void Voivodship::display_local_support(){
-
+    double support;
+    cout<<endl;
+    cout<<"Support for candidates in "<<this->get_name()<<" voivodship"<<endl;
     for(auto& pair : this->localVotes){
         auto& candidate = pair.first;
         auto& vote = pair.second;
-        cout<<candidate;
-        cout<<"Number of votes: "<<candidate->has_voted()?vote+1:vote<<'\n';
+        support=candidate->has_voted()?((vote+1)*100)/this->number_of_voters():(vote*100)/this->number_of_voters();
+        cout<<candidate->get_name();
+        cout<<": "<<support<<"%"<<endl;
     }
 }
 
