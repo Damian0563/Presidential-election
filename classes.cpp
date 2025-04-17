@@ -57,7 +57,34 @@ void Election::determine_winner(){
 }
 
 void Election::support_by_age_group(){
+    Candidates* temp;
+    for(auto& voivodship:this->voivodships){
+        double young_adults=0,middle_aged=0,elders=100;
+        temp=this->headC;
+        int total=temp->candidate->ref_support();
+        while(temp){
+            young_adults=(temp->candidate->age_distribution()[0]*100)/total;
+            middle_aged=(temp->candidate->age_distribution()[1]*100)/total;
+            elders=(temp->candidate->age_distribution()[2]*100)/total;
+            cout<<temp->candidate->get_name()<<endl;
+            cout<<"Young adults: "<<young_adults<<"%"<<endl;
+            cout<<"Middle aged: "<<middle_aged<<"%"<<endl;
+            cout<<"Elders: "<<elders<<"%"<<endl;
+            temp=temp->next;
+        }
+    }
+}
 
+vector<int> Candidate::age_distribution(){
+    int young_adults=0,middle_aged=0,elders=0;
+    Supporters* temp=this->headS;
+    while(temp){
+        if(temp->voter->get_age()>=18 && temp->voter->get_age()<40) young_adults++;
+        else if(temp->voter->get_age()>=40 && temp->voter->get_age()<65) middle_aged++;
+        else elders++;
+        temp=temp->next;
+    }
+    return {young_adults,middle_aged,elders};
 }
 
 bool Election::register_candidate(Candidate* candidate) {
@@ -217,7 +244,7 @@ void Voivodship::free_voters(){
 }
 
 bool Voivodship::register_voter(Voter* voter){
-    if(!this->find(voter->get_name(),voter->get_age())){
+    if(!this->find(voter->get_name(),voter->get_age()) && this->number_of_citizens()>this->number_of_voters()){
         if(strcmp(voter->get_voivodship(),this->name)==0 && voter->get_age()>=18){
             Voters* node=new Voters();
             node->voter=voter;
@@ -232,6 +259,8 @@ bool Voivodship::register_voter(Voter* voter){
             return true;
         }
     }
+    cout<<this->find(voter->get_name(),voter->get_age())<<endl;
+    cout<<this->number_of_citizens()<<this->number_of_voters();
     return false;
 }
 

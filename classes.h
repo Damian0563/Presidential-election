@@ -89,6 +89,8 @@ class Candidate:public Voter{
         void add_supporter(Voter* voter);
         //Frees the list of supporters
         void free_supporters(); 
+        //Function returning support with respect to age group
+        vector<int> age_distribution();
         //operator<< for candidate information
         friend ostream& operator<<(ostream& os,const Candidate& candidate); 
 };
