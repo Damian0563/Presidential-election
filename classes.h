@@ -35,7 +35,7 @@ class Election{
         //Sends the list of candidates to all the voivodships.
         void distribute_candidates_to_voivodships();
         //Returns the counter private member as a reference.
-        unsigned int& refAttendance();
+        double election_attendance();
 };
 
 class Voter{

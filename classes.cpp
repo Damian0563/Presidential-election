@@ -22,7 +22,7 @@ Candidate::~Candidate(){
 void Election::determine_winner(){
     if(headC!=nullptr){
         Candidates* temp=this->headC;
-        int max=0,curr_support=0,total=0;
+        double max=0,curr_support=0,total=0;
         Candidate* winner=this->headC->candidate;
         while(temp){
             curr_support=temp->candidate->ref_support();
@@ -35,7 +35,7 @@ void Election::determine_winner(){
         }
         temp=this->headC;
         double percantage;
-        cout<<"Winner: "<<winner->get_name()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
+        cout<<endl<<"Winner: "<<winner->get_name()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
         while(temp){
             if(strcmp(winner->get_name(),temp->candidate->get_name())!=0){
                 percantage=((temp->candidate->ref_support())*100)/total;
@@ -43,7 +43,8 @@ void Election::determine_winner(){
             }
             temp=temp->next;
         }
-    }else cout<<"No candidates registered"<<endl;
+        cout<<"Election attendance: "<<this->election_attendance()<<"%"<<endl;
+    }else cout<<endl<<"No candidates registered"<<endl;
 }
 
 void Election::support_by_age_group(){
@@ -130,8 +131,15 @@ void Voivodship::register_candidate(Candidate* candidate){
     }
 }
 
-unsigned int& Election::refAttendance(){
-    
+double Election::election_attendance(){
+    double population=0;
+    double voters=0;
+    for(auto& voivodship : this->voivodships){
+        population+=voivodship->number_of_citizens();
+        voters+=voivodship->number_of_voters();
+    }
+    double percantage=(voters*100)/population;
+    return percantage;
 }
 
 Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote,const bool validity){
@@ -282,7 +290,7 @@ void Voivodship::display_local_support(){
     cout<<"Support for candidates in "<<this->get_name()<<" voivodship"<<endl;
     for(auto& entry : this->localVotes){
         auto& candidate = entry;
-        int vote = candidate->local_support(this->get_name());
+        double vote = candidate->local_support(this->get_name());
         if(strcmp(this->get_name(), candidate->get_voivodship())==0){
             support=candidate->has_voted()?((vote+1)*100)/(this->number_of_voters()+1):(vote*100)/this->number_of_voters();
         }else{
