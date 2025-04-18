@@ -48,22 +48,29 @@ void Election::determine_winner(){
 }
 
 void Election::support_by_age_group(){
-    Candidates* temp;
-    for(auto& voivodship:this->voivodships){
-        double young_adults=0,middle_aged=0,elders=100;
-        temp=this->headC;
-        int total=temp->candidate->ref_support();
+    if(this->headC){
+        Candidates* temp=this->headC;
+        double young_adults=0,middle_aged=0,elders=0;
+        double total=0;
+        if(!temp) cout<<temp->candidate->get_name()<<" has no supporters"<<endl;
+        else cout<<endl<<"Support by age group for candidates: "<<endl;
         while(temp){
-            young_adults=(temp->candidate->age_distribution()[0]*100)/total;
-            middle_aged=(temp->candidate->age_distribution()[1]*100)/total;
-            elders=(temp->candidate->age_distribution()[2]*100)/total;
-            cout<<temp->candidate->get_name()<<endl;
-            cout<<"Young adults: "<<young_adults<<"%"<<endl;
-            cout<<"Middle aged: "<<middle_aged<<"%"<<endl;
-            cout<<"Elders: "<<elders<<"%"<<endl;
+            total=temp->candidate->ref_support();
+            young_adults=temp->candidate->age_distribution()[0];
+            middle_aged=temp->candidate->age_distribution()[1];
+            elders=temp->candidate->age_distribution()[2];
+            if(temp->candidate->has_voted()){
+                if(temp->candidate->get_age()<40) young_adults++;
+                else if(temp->candidate->get_age()<=65) middle_aged++;
+                else elders++;
+            } 
+            cout<<temp->candidate->get_name()<<": "<<endl;
+            cout<<"\tYoung adults: "<<(young_adults*100)/total<<"%"<<endl;
+            cout<<"\tMiddle aged: "<<(middle_aged*100)/total<<"%"<<endl;
+            cout<<"\tElders: "<<(elders*100)/total<<"%"<<endl;
             temp=temp->next;
         }
-    }
+    }else cout<<"No candidates registered, can not display support by age group"<<endl;
 }
 
 vector<int> Candidate::age_distribution(){

@@ -76,8 +76,7 @@ int main(){
     
     e.determine_winner(); //Expected: Tim Cheese:75%, Tiger Sam: 25%
     //Election attendance: 3/160 *100(This is in percantages,160 is sum of citizens, 3 is the counter), which is 1.875% 
-
-    // e.support_by_age_group(); //Expected: Young adults:100% Middle aged:0% Elders:0%
+    e.support_by_age_group(); //Expected: Young adults:100% Middle aged:0% Elders:0% for all candidates
 
 
     return 0;
