@@ -85,6 +85,8 @@ class Candidate:public Voter{
         ~Candidate();
         //Vote submission, increasing backing
         void submit_vote();
+        //Returns the support in a given voivodship
+        unsigned int local_support(const char* voivodship);
         //Returns the candidate's support as a reference
         unsigned int& ref_support();
         //Displays all voters that submitted their vote on the candidate.
@@ -108,7 +110,7 @@ class Voivodship{
             Voters* next; //Next Voters entry.
         };
         Voters* headV; //Head of singly linked list of all registered voters.
-        map<Candidate*, int> localVotes; //Map of Candidates and their backing WITHIN THE VOIVODSHIP.
+        vector<Candidate*> localVotes; //Map of Candidates and their backing WITHIN THE VOIVODSHIP.
     public:
         //Constructor for the voivodship instance.
         Voivodship(const char* name, const unsigned int citizens);

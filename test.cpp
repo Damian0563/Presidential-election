@@ -69,12 +69,12 @@ int main(){
     voter1->submit_vote(*c1);
     if(c1->ref_support()!=2) cerr<<"Invalid support of candidate c1 after valid Voter vote cast"<<endl;
     v1->display_local_support(); //Expected: Masovian: Tim Cheese: 100% Tiger Sam 0%
-    // voter2->submit_vote(*c3);
-    // v2.display_local_support(); //Expected: Lesser Poland: Tiger Sam: 100%
-    // voter5->submit_vote(*c1);
-    // v3.display_local_support();// Expected: Great Poland: Tim Cheese: 100%
+    voter2->submit_vote(*c3);
+    v2->display_local_support(); //Expected: Lesser Poland: Tiger Sam: 100%
+    voter5->submit_vote(*c1);
+    v3->display_local_support();// Expected: Great Poland: Tim Cheese: 100%
     
-    // e.determine_winner(); //Expected: Tim Cheese:66.6%, Tiger Sam: 33.3%
+    e.determine_winner(); //Expected: Tim Cheese:75%, Tiger Sam: 25%
     // e.refAttendance();//  3/160 *100(This is in percantages,160 is sum of citizens, 3 is the counter) 
     // e.support_by_age_group(); //Expected: Young adults:100% Middle aged:0% Elders:0%
 

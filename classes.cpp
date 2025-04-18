@@ -1,7 +1,7 @@
 #include "classes.h"
 #include <iostream>
 #include <vector>
-#include <map>
+#include <algorithm>
 #include <cstring>
 using namespace std;
 
@@ -35,13 +35,13 @@ void Election::determine_winner(){
         }
         temp=this->headC;
         double percantage;
-        cout<<"Winner: "<<winner->get_name()<<"gets "<<(max*100)/total<<"%"<<"support in general election."<<endl;
+        cout<<"Winner: "<<winner->get_name()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
         while(temp){
             if(strcmp(winner->get_name(),temp->candidate->get_name())!=0){
                 percantage=((temp->candidate->ref_support())*100)/total;
                 cout<<temp->candidate->get_name()<<", support: "<<percantage<<"%"<<endl;
-                temp=temp->next;
             }
+            temp=temp->next;
         }
     }else cout<<"No candidates registered"<<endl;
 }
@@ -125,12 +125,14 @@ void Election::distribute_candidates_to_voivodships(){
 }
 
 void Voivodship::register_candidate(Candidate* candidate){
-    if(localVotes.find(candidate)==localVotes.end()){
-        localVotes[candidate]=0; //candidate->ref_support() could be, might be unsafe in terms of exploitation of the system
+    if(std::find(this->localVotes.begin(),this->localVotes.end(),candidate)==this->localVotes.end()){
+        this->localVotes.push_back(candidate);
     }
 }
 
-unsigned int& Election::refAttendance() {return this->counter;}
+unsigned int& Election::refAttendance(){
+    
+}
 
 Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote,const bool validity){
     this->name=new char[strlen(name)+1];
@@ -278,13 +280,27 @@ void Voivodship::display_local_support(){
     double support;
     cout<<endl;
     cout<<"Support for candidates in "<<this->get_name()<<" voivodship"<<endl;
-    for(auto& pair : this->localVotes){
-        auto& candidate = pair.first;
-        auto& vote = pair.second;
-        support=candidate->has_voted()?((vote+1)*100)/this->number_of_voters():(vote*100)/this->number_of_voters();
+    for(auto& entry : this->localVotes){
+        auto& candidate = entry;
+        int vote = candidate->local_support(this->get_name());
+        if(strcmp(this->get_name(), candidate->get_voivodship())==0){
+            support=candidate->has_voted()?((vote+1)*100)/(this->number_of_voters()+1):(vote*100)/this->number_of_voters();
+        }else{
+            support=(vote*100)/this->number_of_voters();
+        }
         cout<<candidate->get_name();
         cout<<": "<<support<<"%"<<endl;
     }
+}
+
+unsigned int Candidate::local_support(const char* voivodship){
+    unsigned int counter=0;
+    Supporters* temp=this->headS;
+    while(temp){
+        if(strcmp(temp->voter->get_voivodship(),voivodship)==0) counter++;
+        temp=temp->next;    
+    }
+    return counter;
 }
 
 unsigned int Voivodship::number_of_voters(){
