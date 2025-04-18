@@ -34,7 +34,7 @@
             <mxPoint x="620" y="150" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="bYSpYosJt3RkDmTfbeSV-8" value="Vector of voivodship objects" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FF0000;" parent="1" vertex="1">
+        <mxCell id="bYSpYosJt3RkDmTfbeSV-8" value="Vector of pointers to voivodship objects" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FF0000;" parent="1" vertex="1">
           <mxGeometry x="140" y="440" width="190" height="70" as="geometry" />
         </mxCell>
         <mxCell id="bYSpYosJt3RkDmTfbeSV-9" value="Candidate 1" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -65,7 +65,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="bYSpYosJt3RkDmTfbeSV-15" value="&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;Linked list of pointer to candidate objects&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="390" y="260" width="150" height="50" as="geometry" />
+          <mxGeometry x="170" y="300" width="150" height="50" as="geometry" />
         </mxCell>
         <mxCell id="bYSpYosJt3RkDmTfbeSV-17" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="bYSpYosJt3RkDmTfbeSV-3" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -85,16 +85,16 @@
             <mxPoint x="600" y="650" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="bYSpYosJt3RkDmTfbeSV-20" value="Candidate 1: suppor&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;t&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2:support&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M: support&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="bYSpYosJt3RkDmTfbeSV-20" value="Candidate 1&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="130" y="660" width="140" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="bYSpYosJt3RkDmTfbeSV-21" value="Candidate 1: suppor&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;t&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2:support&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M: support&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="bYSpYosJt3RkDmTfbeSV-21" value="Candidate 1&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="320" y="650" width="140" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="bYSpYosJt3RkDmTfbeSV-22" value="Candidate 1: suppor&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;t&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2:support&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M: support&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="bYSpYosJt3RkDmTfbeSV-22" value="Candidate 1&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Candidate 2&lt;/span&gt;&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;&lt;div&gt;Candidate M&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="530" y="650" width="140" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="bYSpYosJt3RkDmTfbeSV-23" value="&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;Map of pointer to candidates&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(255, 0, 0);&quot;&gt;and their support&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="bYSpYosJt3RkDmTfbeSV-23" value="&lt;font color=&quot;#ff0000&quot;&gt;Vector of pointer to candidate objects&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="215" y="600" width="115" height="70" as="geometry" />
         </mxCell>
         <mxCell id="bYSpYosJt3RkDmTfbeSV-24" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="bYSpYosJt3RkDmTfbeSV-3" target="bYSpYosJt3RkDmTfbeSV-25" edge="1">
@@ -274,6 +274,9 @@
         </mxCell>
         <mxCell id="bYSpYosJt3RkDmTfbeSV-62" value="...&lt;div&gt;Voter J&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="730" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7fCuE8VbdEx2PNfLNz2B-1" value="&lt;font style=&quot;color: light-dark(rgb(255, 0, 0), transparent);&quot;&gt;Linked list of pointers to voter objects(supporters)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="130" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

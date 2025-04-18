@@ -5,9 +5,8 @@
 #include <cstring>
 using namespace std;
 
-Election::Election(const vector<Voivodship*> voivodship,const unsigned int counter){
+Election::Election(const vector<Voivodship*> voivodship){
     this->voivodships=voivodship;
-    this->counter=counter;
     this->headC=nullptr;
 }
 
@@ -165,7 +164,7 @@ Voter::~Voter(){
 }
 
 void Voter::submit_vote(Candidate& candidate){
-    if(this->validity && !this->vote){
+    if(this->validity && !this->vote && candidate.validity){
         candidate.ref_support()++;
         this->has_voted()=true;
         candidate.add_supporter(this);

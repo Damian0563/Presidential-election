@@ -12,29 +12,28 @@ class Voivodship;
 
 class Election{
     private:
-        unsigned int counter; //Integer variable storing the amount of all votes.
-        vector<Voivodship*> voivodships; //Vector containing Voivodship objects. It is meant for determining the election winner as well the support in respect to group age.
+        vector<Voivodship*> voivodships; //Vector containing Voivodship objects
         struct Candidates{  //Singly linked list of Candidate objects.
             Candidate* candidate; //Candidate object.
             Candidates* next; //Next Candidate instance.
         };
         Candidates* headC; //Head of the singly linked list for candidates.
     public:
-        //Constructor for the election, the counter(amount of all votes) is assumed to be zero initially, takes the vector of voivodship objects as an argument as well.
-        Election(const vector<Voivodship*> voivodship,const unsigned int counter=0); 
+        //Constructor for the election
+        Election(const vector<Voivodship*> voivodship); 
         //Destructor for Election class.
         ~Election();
         //Determines an election winner and displays total support of each candidate in percantages.
         void determine_winner();
         //Shows the backing of candidates with respect to the age group of voters. Age(18-39]= Young adults, Age[40,65)= Middle aged, Age(65,..)= Elders. 
         void support_by_age_group();
-        //Appends the candidate to the structure of Candidates following prior validations. Takes Candidate node to be added as an argument.
+        //Appends the candidate to the structure of Candidates following prior validations. Takes Candidate object to be added as an argument.
         bool register_candidate(Candidate* candidate);
         //Displays all registered candidates(without their support).
         void display_registered_candidates();
         //Sends the list of candidates to all the voivodships.
         void distribute_candidates_to_voivodships();
-        //Returns the counter private member as a reference.
+        //Returns the election attendance in percantage
         double election_attendance();
 };
 
