@@ -20,43 +20,52 @@ class Election{
         Candidates* headC; //Head of the singly linked list for candidates.
     public:
         //Constructor for the election
-        Election(const vector<Voivodship*> voivodship); 
+        Election();
+        //Adds a voivodship to the vector of voivodships.Returns true if the voivodship was added, false otherwise(there was such a voivoship already there).
+        bool add_voivodship(const char* name, const unsigned int citizens); 
         //Destructor for Election class.
         ~Election();
         //Determines an election winner and displays total support of each candidate in percantages.
         void determine_winner();
         //Shows the backing of candidates with respect to the age group of voters. Age(18-39]= Young adults, Age[40,65)= Middle aged, Age(65,..)= Elders. 
         void support_by_age_group();
-        //Appends the candidate to the structure of Candidates following prior validations. Takes Candidate object to be added as an argument.
-        bool register_candidate(Candidate* candidate);
         //Displays all registered candidates(without their support).
         void display_registered_candidates();
-        //Sends the list of candidates to all the voivodships.
-        void distribute_candidates_to_voivodships();
+        //Displays all voters
+        void display_all_voters();
+        //Registers a voter(creates instance) IF restrictions are met. Returns pointer to object if registered and nullptr otherwise.
+        Voter* register_voter(const char* name, const unsigned int age,const char* voivodship);
+        //Displays all registered voters(who voted) within a voivodship. If such a voivodship does not exist false is returned and no voters displayed.
+        bool display_registered_voters(const char* voivodship_name);
+        //Registers a candidate, creates such instance if the restrictions are met, appends the object to the singly linked list.
+        Candidate* register_candidate(const char* name, const unsigned int age, const char* voivodship);
+        //Displays local support of Candidates in given voivodship
+        bool display_local(const char* voivodship_name);
         //Returns the election attendance in percantage
         double election_attendance();
+        //Displays all voters that submitted their vote on the candidate.
+        void display_voters(const Candidate* candidate);
+        //Returns local support of a given candidate in a given voivodship.If either does not exist, false is returned.
+        bool local_support(const Candidate* candidate,const char* voivodship_name);
+        //Displays all voivodships
+        void display_voivodships();
 };
 
 class Voter{
     private:
-        bool validity;//boolean validity of a voter, indicating registartion status, by default false
         char* name;//Name of a voter.
         unsigned int age;//Age of a voter.
         bool vote;//Boolean status of vote submission.
         char* voivodship;//Name of a voivodship the voter lives in.
     public:
         //Constructor of voter, taking up the private variables. The vote submission status is assumed to be false at object creation.
-        Voter(const char* name, const unsigned int age,const char* voivodship,bool vote=false,const bool validity=false);
+        Voter(const char* name, const unsigned int age,const char* voivodship,bool vote=false);
         //Destructor for voter instance.
         ~Voter();
-        //Copy contrcutor for voter instance
-        Voter(const Voter& voter);
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
         void submit_vote(Candidate& candidate);
         //Returns the age of a voter.
         unsigned int get_age()const;
-        //Returns the vote submission status.
-        bool& refValidity();
         //Displays the voting status
         bool& has_voted();
         //Displays the voters information.
@@ -79,21 +88,21 @@ class Candidate:public Voter{
         Supporters* headS; //Head of the supporters structure.
     public:
         //Constructor for candidate object, inherits from voter instance
-        Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote = false, const bool validity = false, const int support = 0);
+        Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote = false, const int support = 0);
         //Destructor for candidate instance.
         ~Candidate();
         //Vote submission, increasing backing
         void submit_vote();
-        //Returns the support in a given voivodship
-        unsigned int local_support(const char* voivodship);
         //Returns the candidate's support as a reference
         unsigned int& ref_support();
-        //Displays all voters that submitted their vote on the candidate.
-        void display_voters();
         //Appends a voter to the supporters list.
         void add_supporter(Voter* voter);
         //Frees the list of supporters
         void free_supporters(); 
+        //Returns the number of supporters in a given voivodship.
+        unsigned int supporters_in_voivodship(const char* voivodship);
+        //Displays the candidate's supporters
+        void display_supporters()const;
         //Function returning support with respect to age group
         vector<int> age_distribution();
         //operator<< for candidate information
@@ -104,33 +113,30 @@ class Voivodship{
     private:
         char* name; //Name of the voivodship.
         unsigned int citizens; //Number of all citizens living within the voidvodship. The number voters can not exceed this number.
-        struct Voters{ //Singly linked list of all registered voters(who submitted their vote).
+        struct Voters{ //Singly linked list of all registered voters.
             Voter* voter; //Voter instance.
             Voters* next; //Next Voters entry.
         };
         Voters* headV; //Head of singly linked list of all registered voters.
-        vector<Candidate*> localVotes; //Map of Candidates and their backing WITHIN THE VOIVODSHIP.
     public:
         //Constructor for the voivodship instance.
         Voivodship(const char* name, const unsigned int citizens);
         //Destructor for voivodship object.
         ~Voivodship();
-        //Appends the voter to the registerd voters.
-        bool register_voter(Voter* voter);
-        //Displays all registered voters within a voivodship.
-        void display_registered_voters();
-        //Iterates thorugh singly linked list and returns
+        //Iterates thorugh singly linked list and returns boolean value indicating presence of a voter in those who voted.
         bool find(const char* name,const unsigned int age);
-        //Displays the local support of each candidate in percantages.
-        void display_local_support();
         //Returns the number of all registered voters.
         unsigned int number_of_voters();
         //Returns the number of citizens
         unsigned int number_of_citizens();
         //Returns the name of the voivodship(private memeber)
         char* get_name();
-        //Constructs a local map for candidates and their backing.
-        void register_candidate(Candidate* candidate);
+        //Clears the list of voters.
+        void free_voters();
+        //Displays all voters within voivodship that voted.
+        void display_voters();
+        //Adds a voter to the list of voters.
+        bool add_voter(Voter* voter);
 };
 
 #endif

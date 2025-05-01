@@ -5,17 +5,23 @@
 #include <cstring>
 using namespace std;
 
-Election::Election(const vector<Voivodship*> voivodship){
-    this->voivodships=voivodship;
+Election::Election(){
     this->headC=nullptr;
+}
+
+bool Election::add_voivodship(const char* name, const unsigned int citizens){
+    for (auto& v : this->voivodships) {
+        if (strcmp(v->get_name(), name) == 0) {
+            return false;
+        }
+    }
+    Voivodship* node=new Voivodship(name,citizens);
+    this->voivodships.push_back(node);
+    return true;
 }
 
 Election::~Election(){
     this->headC=nullptr;
-}
-
-Candidate::~Candidate(){
-    this->free_supporters();
 }
 
 void Election::determine_winner(){
@@ -72,68 +78,13 @@ void Election::support_by_age_group(){
     }else cout<<"No candidates registered, can not display support by age group"<<endl;
 }
 
-vector<int> Candidate::age_distribution(){
-    int young_adults=0,middle_aged=0,elders=0;
-    Supporters* temp=this->headS;
-    while(temp){
-        if(temp->voter->get_age()>=18 && temp->voter->get_age()<40) young_adults++;
-        else if(temp->voter->get_age()>=40 && temp->voter->get_age()<65) middle_aged++;
-        else elders++;
-        temp=temp->next;
-    }
-    return {young_adults,middle_aged,elders};
-}
-
-bool Election::register_candidate(Candidate* candidate) {
-    if(candidate->get_age()>=35){
-        Candidates* newNode = new Candidates();
-        newNode->candidate = candidate;
-        newNode->candidate->refValidity()=true;
-        newNode->next = nullptr;
-        if(this->headC == nullptr) this->headC = newNode;
-        else{
-            Candidates* temp = this->headC;
-            while(temp->next){
-                temp = temp->next;
-            }
-            temp->next = newNode;
-        }
-        return true;
-    }
-    return false;
-}
-
-ostream& operator<<(ostream& os, const Candidate& candidate) {
-    os <<"\n"
-       << "Candidate Name: " << candidate.get_name() << "\n"
-       << "Age: " << candidate.get_age()<< "\n"
-       << "Voivodship: " << candidate.get_voivodship() << "\n"
-       << "Support: " << candidate.support << "\n";
-    return os;
-}
-
 void Election::display_registered_candidates(){
     Candidates* temp=this->headC;
+    if(!temp) cout<<"No candidates registered"<<endl;
+    else cout<<endl<<"Registered candidates: "<<endl;
     while(temp){
         cout<<*(temp->candidate);
         temp=temp->next;
-    }
-}
-
-void Election::distribute_candidates_to_voivodships(){
-    Candidates* temp=this->headC;
-    while(temp){
-        Candidate* candidate=temp->candidate;
-        for(auto& voivodship: voivodships){
-            voivodship->register_candidate(candidate);
-        }
-        temp=temp->next;
-    }
-}
-
-void Voivodship::register_candidate(Candidate* candidate){
-    if(std::find(this->localVotes.begin(),this->localVotes.end(),candidate)==this->localVotes.end()){
-        this->localVotes.push_back(candidate);
     }
 }
 
@@ -148,27 +99,115 @@ double Election::election_attendance(){
     return percantage;
 }
 
-Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote,const bool validity){
-    this->name=new char[strlen(name)+1];
-    strcpy(this->name,name);
-    this->age=age;
-    this->voivodship=new char[strlen(voivodship)+1];
-    strcpy(this->voivodship,voivodship);
-    this->vote=vote;
-    this->validity=validity;
-}
-
-Voter::~Voter(){
-    delete[] this->name;
-    delete[] this->voivodship;
-}
-
-void Voter::submit_vote(Candidate& candidate){
-    if(this->validity && !this->vote && candidate.validity){
-        candidate.ref_support()++;
-        this->has_voted()=true;
-        candidate.add_supporter(this);
+Voter* Election::register_voter(const char* name, const unsigned int age,const char* voivodship){
+    for(auto& v:this->voivodships){
+        if(strcmp(v->get_name(),voivodship)==0 && !v->find(name,age) && v->number_of_citizens()>v->number_of_voters()){ //Ensure no duplicate citizens with the sme name and age
+            if(age>=18){
+                Voter* node=new Voter(name,age,voivodship);
+                v->add_voter(node);
+                return node;
+            }
+            return nullptr;
+        }
     }
+    return nullptr;
+}
+
+Candidate* Election::register_candidate(const char* name, const unsigned int age, const char* voivodship){
+    for(auto& v:this->voivodships){
+        if(strcmp(v->get_name(),voivodship)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
+            return nullptr; 
+        }
+    }
+    if(age>=35){
+        Candidate* node=new Candidate(name,age,voivodship);
+        Candidates* temp=this->headC;
+        if(!temp) {
+            this->headC = new Candidates();
+            this->headC->candidate = node;
+            this->headC->next = nullptr;
+            return node;
+        }
+        while(temp->next){
+            temp=temp->next;
+        }
+        temp->next = new Candidates();
+        temp->next->candidate = node;
+        temp->next->next = nullptr;
+        return node;
+    }
+    return nullptr;
+}
+
+void Election::display_all_voters(){
+    for(auto& v : this->voivodships){
+        v->display_voters();
+    }
+}
+
+bool Election::display_registered_voters(const char* voivodship_name){
+    for(auto& v : this->voivodships){
+        if(strcmp(v->get_name(),voivodship_name)==0){
+            v->display_voters();
+            cout<<"Number of voters: "<<v->number_of_voters()<<", Number of citizens: "<<v->number_of_citizens()<<endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Election::display_local(const char* voivodship_name){
+    for(auto& v : this->voivodships){
+        if(strcmp(v->get_name(),voivodship_name)==0){
+            cout<<endl<<v->get_name()<<": "<<endl;
+            Candidates* temp=this->headC;
+            while(temp){
+                cout<<temp->candidate->get_name()<<": "<<(double(temp->candidate->supporters_in_voivodship(v->get_name()))*100)/double(v->number_of_voters())<<"%"<<endl;
+                temp=temp->next;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Election::local_support(const Candidate* candidate,const char* voivodship_name){
+    for(auto& v : this->voivodships){
+        if(strcmp(v->get_name(),voivodship_name)==0){
+            cout<<endl<<v->get_name()<<": "<<endl;
+            Candidates* temp=this->headC;
+            while(temp){
+                if(strcmp(temp->candidate->get_name(),candidate->get_name())==0){
+                    cout<<temp->candidate->get_name()<<": "<<(double(temp->candidate->supporters_in_voivodship(v->get_name()))*100)/double(v->number_of_voters())<<"%"<<endl;
+                    return true;
+                }
+                temp=temp->next;
+            }
+        }
+    }
+    return false;
+}
+
+void Election::display_voters(const Candidate* candidate){
+    candidate->display_supporters();
+}
+
+void Election::display_voivodships(){
+    for(auto& v : this->voivodships){
+        cout<<v->get_name()<<", ";
+    }
+    cout<<endl;
+}
+
+
+
+ostream& operator<<(ostream& os, const Candidate& candidate) {
+    os <<"\n"
+       << "Candidate Name: " << candidate.get_name() << "\n"
+       << "Age: " << candidate.get_age()<< "\n"
+       << "Voivodship: " << candidate.get_voivodship() << "\n"
+       << "Support: " << candidate.support << "\n";
+    return os;
 }
 
 void Candidate::add_supporter(Voter* voter){
@@ -184,46 +223,103 @@ void Candidate::add_supporter(Voter* voter){
     }
 }
 
+Candidate::Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote, const int support)
+    : Voter(name, age, voivodship, vote), support(support), headS(nullptr) {}
+
+void Candidate::free_supporters(){
+    Supporters* current=this->headS;
+    while (current!=nullptr) {
+        Supporters* temp=current;
+        current=current->next;
+        delete temp->voter;
+        delete temp;
+    }
+    this->headS=nullptr;
+}
+
+void Candidate::submit_vote(){
+    ref_support()++;
+    this->has_voted()=true;
+}
+
+unsigned int& Candidate::ref_support(){return this->support;}
+
+vector<int> Candidate::age_distribution(){
+    int young_adults=0,middle_aged=0,elders=0;
+    Supporters* temp=this->headS;
+    while(temp){
+        if(temp->voter->get_age()>=18 && temp->voter->get_age()<40) young_adults++;
+        else if(temp->voter->get_age()>=40 && temp->voter->get_age()<65) middle_aged++;
+        else elders++;
+        temp=temp->next;
+    }
+    return {young_adults,middle_aged,elders};
+}
+
+Candidate::~Candidate(){
+    this->free_supporters();
+}
+
+void Candidate::display_supporters() const {
+    Supporters* temp=this->headS;
+    cout<<endl<<this->get_name()<<" supporters: "<<endl;
+    while(temp){
+        cout<<*(temp->voter);
+        temp=temp->next;
+    }
+}
+
+unsigned int Candidate::supporters_in_voivodship(const char* voivodship){
+    unsigned int counter=0;
+    Supporters* temp=this->headS;
+    while(temp){
+        if(strcmp(temp->voter->get_voivodship(),voivodship)==0) counter++;
+        temp=temp->next;
+    }
+    return counter;
+}
+
+
 unsigned int Voter::get_age()const {return this->age;}
 
 char* Voter::get_voivodship()const {return this->voivodship;}
 
 bool& Voter::has_voted(){return this->vote;}
 
-Candidate::Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote, const bool validity, const int support)
-    : Voter(name, age, voivodship, vote, validity), support(support), headS(nullptr) {}
-
-void Candidate::free_supporters(){
-    Supporters* current=headS;
-    while (current!=nullptr) {
-        Supporters* temp=current;
-        current=current->next;
-        delete temp;
-    }
-    headS=nullptr;
-}
-
-bool& Voter::refValidity(){return this->validity;}
-
-void Candidate::submit_vote(){
-    if(this->refValidity() && !this->has_voted()){
-        ref_support()++;
-        this->has_voted()=true;
-    }
+ostream& operator<<(ostream& os,const Voter& voter){
+    os << "Voter Name: " << voter.name << "\n"
+       << "Age: " << voter.age<< "\n"
+       << "Voivodship: " << voter.voivodship << "\n";
+    return os;
 }
 
 char* Voter::get_name()const {return this->name;}
 
-unsigned int& Candidate::ref_support(){return this->support;}
-
-void Candidate::display_voters(){
-    Supporters* temp=this->headS;
-    while(temp){
-        cout<<temp->voter;
-        temp=temp->next;
-    }
-    if(this->refValidity() && this->has_voted()) cout<<this; //Case when president self-voted 
+Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote){
+    this->name=new char[strlen(name)+1];
+    strcpy(this->name,name);
+    this->age=age;
+    this->voivodship=new char[strlen(voivodship)+1];
+    strcpy(this->voivodship,voivodship);
+    this->vote=vote;
 }
+
+Voter::~Voter(){
+    delete[] this->name;
+    delete[] this->voivodship;
+}
+
+void Voter::submit_vote(Candidate& candidate){
+    
+    candidate.ref_support()++;
+    this->has_voted()=true;
+    candidate.add_supporter(this);
+    
+}
+
+
+
+
 
 Voivodship::Voivodship(const char* name, const unsigned int citizens){
     this->name=new char[strlen(name)+1];
@@ -233,51 +329,10 @@ Voivodship::Voivodship(const char* name, const unsigned int citizens){
 }
 
 Voivodship::~Voivodship(){
-    this->localVotes.clear();
-}
-
-bool Voivodship::register_voter(Voter* voter){
-    if(this->find(voter->get_name(),voter->get_age())==false && this->number_of_citizens()>=this->number_of_voters()+1){
-        if(strcmp(voter->get_voivodship(),this->get_name())==0 && voter->get_age()>=18){
-            Voters* node=new Voters();
-            //node->voter=new Voter(*voter);
-            node->voter=voter;
-            node->voter->refValidity()=true;
-            node->next=nullptr;
-            Voters* temp=this->headV;
-            if(temp==nullptr){
-                this->headV=node;
-            }else {
-                while(temp->next) temp=temp->next;
-                temp->next=node;
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
-Voter::Voter(const Voter& voter){
-    this->name=new char[strlen(voter.name)+1];
-    strcpy(this->name,voter.name);
-    this->voivodship=new char[strlen(voter.voivodship)+1];
-    strcpy(this->voivodship,voter.voivodship);
-    this->age=voter.age;
-    this->validity=voter.validity;
-    this->vote=voter.vote;
+    this->free_voters();
 }
 
 char* Voivodship::get_name(){return this->name;}
-
-void Voivodship::display_registered_voters(){
-    if(this->headV==nullptr) cout<<"No registered voters for: "<<this->get_name()<<endl;
-    Voters* temp=this->headV;
-    while(temp){
-        cout<<*(temp->voter);
-        temp=temp->next;
-    }
-    cout<<endl;
-}
 
 bool Voivodship::find(const char* name, const unsigned int age) {
     Voters* temp=this->headV;
@@ -288,33 +343,6 @@ bool Voivodship::find(const char* name, const unsigned int age) {
         temp=temp->next;
     }
     return false;
-}
-
-void Voivodship::display_local_support(){
-    double support;
-    cout<<endl;
-    cout<<"Support for candidates in "<<this->get_name()<<" voivodship"<<endl;
-    for(auto& entry : this->localVotes){
-        auto& candidate = entry;
-        double vote = candidate->local_support(this->get_name());
-        if(strcmp(this->get_name(), candidate->get_voivodship())==0){
-            support=candidate->has_voted()?((vote+1)*100)/(this->number_of_voters()+1):(vote*100)/this->number_of_voters();
-        }else{
-            support=(vote*100)/this->number_of_voters();
-        }
-        cout<<candidate->get_name();
-        cout<<": "<<support<<"%"<<endl;
-    }
-}
-
-unsigned int Candidate::local_support(const char* voivodship){
-    unsigned int counter=0;
-    Supporters* temp=this->headS;
-    while(temp){
-        if(strcmp(temp->voter->get_voivodship(),voivodship)==0) counter++;
-        temp=temp->next;    
-    }
-    return counter;
 }
 
 unsigned int Voivodship::number_of_voters(){
@@ -331,9 +359,37 @@ unsigned int Voivodship::number_of_citizens(){
     return this->citizens;
 }
 
-ostream& operator<<(ostream& os,const Voter& voter){
-    os << "Voter Name: " << voter.name << "\n"
-       << "Age: " << voter.age<< "\n"
-       << "Voivodship: " << voter.voivodship << "\n";
-    return os;
+void Voivodship::free_voters(){
+    Voters* current=this->headV;
+    while (current!=nullptr) {
+        Voters* temp=current;
+        current=current->next;
+        delete temp->voter;
+        delete temp;
+    }
+    this->headV=nullptr;
+}
+
+void Voivodship::display_voters(){
+    Voters* temp=this->headV;
+    cout<<endl<<this->name<<" voters: "<<endl;
+    while(temp){
+        cout<<*(temp->voter);
+        temp=temp->next;
+    }
+}
+
+bool Voivodship::add_voter(Voter* voter){
+    Voters* temp = this->headV;
+    if(this->find(voter->get_name(), voter->get_age())) {
+        return false;
+    }
+    if(this->number_of_citizens()<=this->number_of_voters()){
+        return false;
+    }
+    Voters* node = new Voters();
+    node->voter = voter;
+    node->next = this->headV;
+    this->headV = node;
+    return true;
 }
