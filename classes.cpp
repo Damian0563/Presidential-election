@@ -117,9 +117,12 @@ Candidate* Election::register_candidate(const char* name, const unsigned int age
     for(auto& v:this->voivodships){
         if(strcmp(v->get_name(),voivodship)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
             return nullptr; 
+        }else if(strcmp(v->get_name(),voivodship)==0 && age>=35){
+            v->add_voter_count(); //Decrement the number of citizens
         }
     }
     if(age>=35){
+        
         Candidate* node=new Candidate(name,age,voivodship);
         Candidates* temp=this->headC;
         if(!temp) {
@@ -310,11 +313,11 @@ Voter::~Voter(){
 }
 
 void Voter::submit_vote(Candidate& candidate){
-    
-    candidate.ref_support()++;
-    this->has_voted()=true;
-    candidate.add_supporter(this);
-    
+    if(!this->has_voted()){
+        candidate.ref_support()++;
+        this->has_voted()=true;
+        candidate.add_supporter(this);
+    }
 }
 
 
@@ -377,6 +380,10 @@ void Voivodship::display_voters(){
         cout<<*(temp->voter);
         temp=temp->next;
     }
+}
+
+void Voivodship::add_voter_count(){
+    this->citizens--;
 }
 
 bool Voivodship::add_voter(Voter* voter){

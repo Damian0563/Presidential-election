@@ -127,6 +127,8 @@ class Voivodship{
         bool find(const char* name,const unsigned int age);
         //Returns the number of all registered voters.
         unsigned int number_of_voters();
+        //Increases the number of voters by one(decreases the citizens count). This is done in the case of candidate registration(the object can not be linked to the list).
+        void add_voter_count();
         //Returns the number of citizens
         unsigned int number_of_citizens();
         //Returns the name of the voivodship(private memeber)

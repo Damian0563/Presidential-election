@@ -16,6 +16,17 @@ R7. The uniquness of objects is assumed, namely there can not be multiple voivod
 R8. The same applies to voters, there can not be multiple voters with the same name and age IN A GIVEN VOIVODSHIP.
 */
 
+/*
+    IMPORTANT SCEANRIOS TO CHECK:
+    1. Adding a voivodship with the same name twice.
+    2. Registering a voter with the same name and age in a given voivodship twice.
+    3. Registering a candidate with the same name and age in a given voivodship twice.
+    4. Registering a candidate with the same name and age in a different voivodship.    
+
+
+*/
+
+
 int main(){
 
     Election* e=new Election();
@@ -50,6 +61,14 @@ int main(){
     Candidate* c1=e->register_candidate("Pearl",65,"Chicago");
     if(c1!=nullptr) cerr<<"Candidate registered, violating maximum citizens limit"<<endl;
     e->display_registered_candidates();//Expected output: empty list
+    Candidate* c2=e->register_candidate("Pearl",35,"New York");
+    if(c2==nullptr) cerr<<"Candidate not registered, despite being 35 and no citizens limit reached"<<endl;
+    Candidate* c3=e->register_candidate("Carl",35,"New York");
+    if(c3==nullptr) cerr<<"Candidate not registered, despite being 35 and no citizens limit reached"<<endl;
+    // v1->submit_vote(*c2);
+    // if(!v1->has_voted() || c2->ref_support()!=1) cerr<<"Vote not submitted, despite being correct"<<endl;
+    // v1->submit_vote(*c3);
+    // if(c3->ref_support()==1) cerr<<"Vote submission allowed twice"<<endl; Rethink who is reponsible for vote submission.
 
 
     return 0;
