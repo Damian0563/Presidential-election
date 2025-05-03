@@ -49,6 +49,8 @@ class Election{
         bool local_support(const Candidate* candidate,const char* voivodship_name);
         //Displays all voivodships
         void display_voivodships();
+        //Returns the number of votes of candidates in a given voivodship.
+        unsigned int get_votes_of_candidates(const char* voivodship);
 };
 
 class Voter{
@@ -62,11 +64,13 @@ class Voter{
         Voter(const char* name, const unsigned int age,const char* voivodship,bool vote=false);
         //Destructor for voter instance.
         ~Voter();
+        //Returns the voting status of a candidate
+        bool get_vote()const;
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
         void submit_vote(Candidate& candidate);
         //Returns the age of a voter.
         unsigned int get_age()const;
-        //Displays the voting status
+        //Displays the voting status and modifies it when vote is casted.
         bool& has_voted();
         //Displays the voters information.
         friend ostream& operator<<(ostream& os,const Voter& voter);
@@ -139,6 +143,8 @@ class Voivodship{
         void display_voters();
         //Adds a voter to the list of voters.
         bool add_voter(Voter* voter);
+        //Returns the number of voters that submitted their vote, not neccessarily all registered voters submitted one.
+        unsigned int number_of_submitted_votes();
 };
 
 #endif
