@@ -21,7 +21,15 @@ bool Election::add_voivodship(const char* name, const unsigned int citizens){
 }
 
 Election::~Election(){
-    this->headC=nullptr;
+    if(this==nullptr) return;
+    Candidates* current = this->headC;
+    while (current != nullptr) {
+        Candidates* temp = current;
+        current = current->next;
+        if(temp->candidate) delete temp->candidate;
+        delete temp;         
+    }
+    this->headC = nullptr;
 }
 
 void Election::determine_winner(){
@@ -123,7 +131,17 @@ Voter* Election::register_voter(const char* name, const unsigned int age,const c
     return nullptr;
 }
 
+bool Election::find_candidate(const char* name, const unsigned int age){
+    Candidates* temp=this->headC;
+    while(temp){
+        if(strcmp(temp->candidate->get_name(),name)==0 && temp->candidate->get_age()==age) return true;
+        temp=temp->next;
+    }
+    return false;
+}
+
 Candidate* Election::register_candidate(const char* name, const unsigned int age, const char* voivodship){
+    if(this->find_candidate(name,age)) return nullptr; //Candidate with the same name and age already exists
     for(auto& v:this->voivodships){
         if(strcmp(v->get_name(),voivodship)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
             return nullptr; 
@@ -132,7 +150,6 @@ Candidate* Election::register_candidate(const char* name, const unsigned int age
         }
     }
     if(age>=35){
-        
         Candidate* node=new Candidate(name,age,voivodship);
         Candidates* temp=this->headC;
         if(!temp) {
@@ -276,7 +293,7 @@ void Candidate::free_supporters(){
     while (current!=nullptr) {
         Supporters* temp=current;
         current=current->next;
-        delete temp->voter;
+        if(temp->voter) delete temp->voter;
         delete temp;
     }
     this->headS=nullptr;
@@ -316,7 +333,9 @@ vector<int> Candidate::age_distribution(){
 }
 
 Candidate::~Candidate(){
-    this->free_supporters();
+    if(this!=nullptr){
+        this->free_supporters();
+    }
 }
 
 void Candidate::display_supporters() const {
@@ -391,8 +410,10 @@ Voter::Voter(const char* name, const unsigned int age,const char* voivodship,boo
 }
 
 Voter::~Voter(){
-    delete[] this->name;
-    delete[] this->voivodship;
+    if(this != nullptr) {
+        delete[] this->name;
+        delete[] this->voivodship;
+    }
 }
 
 void Voter::submit_vote(Candidate& candidate){
@@ -454,7 +475,7 @@ void Voivodship::free_voters(){
     while (current!=nullptr) {
         Voters* temp=current;
         current=current->next;
-        delete temp->voter;
+        if(temp->voter) delete temp->voter;
         delete temp;
     }
     this->headV=nullptr;

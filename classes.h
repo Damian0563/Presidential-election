@@ -23,6 +23,8 @@ class Election{
         Election();
         //Adds a voivodship to the vector of voivodships.Returns true if the voivodship was added, false otherwise(there was such a voivoship already there).
         bool add_voivodship(const char* name, const unsigned int citizens); 
+        //Checks if a candidate of given age and name exists in the election.
+        bool find_candidate(const char* name, const unsigned int age);
         //Destructor for Election class.
         ~Election();
         //Determines an election winner and displays total support of each candidate in percantages.

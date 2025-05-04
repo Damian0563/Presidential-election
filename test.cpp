@@ -1,29 +1,33 @@
 #include <iostream>
 #include <vector>
-#include <map>
 #include "classes.h"
 using namespace std;
 
 /*
 Assumptions and Restrictions:
+A1. Voters are diffrentated by name and age within voivodships:
+    Sam 39 years old in Chicago is different from Sam 39 years old in Boston.
+    But Sam 39 years old in Chicago is the same as Sam 39 years old in Chicago.
+A2. Candidates are differentiated by name and age only globally.
+    There can be only one candidate John 36 years old in the election.
+A3.Voivodships are differentiated by name only.
+    There can be only one voivodship Chicago in the election.
 R1. Voter must be at least 18 years of age to vote.
 R2. The number of voters cannot outnumber the number of citizens of voivodship. 
 R3. Each vote has the same weight and can be submitted only once. 
 R4. Candidates must be at least 35 years of age to part-take.
 R5. Candidates can also be voters, they can vote.
 R6. Candidates cannot have the number of votes greater than the total amount of votes.
-R7. The uniquness of objects is assumed, namely there can not be multiple voivodships with the same name.
-R8. The same applies to voters, there can not be multiple voters with the same name and age IN A GIVEN VOIVODSHIP.
 */
 
 /*
-    IMPORTANT SCEANRIOS TO CHECK:
-    1. Adding a voivodship with the same name twice.
-    2. Registering a voter with the same name and age in a given voivodship twice.
-    3. Registering a candidate with the same name and age in a given voivodship twice.
-    4. Registering a candidate with the same name and age in a different voivodship.    
-
-
+    IMPORTANT SCENARIOS TO CHECK:
+    1. Voter registration: underage, duplicate, correct age, citizens limit reached.
+    2. Candidate registration: underage, duplicate, correct age, citizens limit reached.   
+    3. Vote submission: valid voter-valid candidate, valid voter-invalid candidate, invalid voter-valid candidate, invalid voter-invalid candidate.
+    4. Election attendance: ensure that candidates are taken into consideration.
+    5. Determining support(global,local,...etc.): ensure candidates' votes are counted alongside 'regular' voters.
+    6. Handling of empty lists: ensure that no seg faults occur when trying to access INVALID NODES.
 */
 
 
