@@ -117,11 +117,18 @@ double Election::election_attendance(){
     return percantage;
 }
 
-Voter* Election::register_voter(const char* name, const unsigned int age,const char* voivodship){
+unsigned int Election::generate_id(){
+    static unsigned int last_id = 0; // Keeps track of the last assigned ID
+    return ++last_id; // Increment and return a unique ID
+}
+
+Voter* Election::register_voter(const char* name, const unsigned int age,const char* voivodship_name){
+    if(this->voivodships.empty()) return nullptr; //No voivodships registered
     for(auto& v:this->voivodships){
-        if(strcmp(v->get_name(),voivodship)==0 && !v->find(name,age) && v->number_of_citizens()>v->number_of_voters()){ //Ensure no duplicate citizens with the sme name and age
+        if(strcmp(v->get_name(),voivodship_name)==0 && v->number_of_citizens()>v->number_of_voters()){ //Ensure no duplicate citizens with the sme name and age
             if(age>=18){
-                Voter* node=new Voter(name,age,voivodship);
+                unsigned int id=this->generate_id();;
+                Voter* node=new Voter(id,name,age,voivodship_name);
                 v->add_voter(node);
                 return node;
             }
@@ -131,26 +138,26 @@ Voter* Election::register_voter(const char* name, const unsigned int age,const c
     return nullptr;
 }
 
-bool Election::find_candidate(const char* name, const unsigned int age){
+bool Election::find_candidate(const unsigned int id){
     Candidates* temp=this->headC;
     while(temp){
-        if(strcmp(temp->candidate->get_name(),name)==0 && temp->candidate->get_age()==age) return true;
+        if(temp->candidate->get_id()==id) return true;
         temp=temp->next;
     }
     return false;
 }
 
-Candidate* Election::register_candidate(const char* name, const unsigned int age, const char* voivodship){
-    if(this->find_candidate(name,age)) return nullptr; //Candidate with the same name and age already exists
+Candidate* Election::register_candidate(const char* name, const unsigned int age, const char* voivodship_name){
     for(auto& v:this->voivodships){
-        if(strcmp(v->get_name(),voivodship)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
+        if(strcmp(v->get_name(),voivodship_name)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
             return nullptr; 
-        }else if(strcmp(v->get_name(),voivodship)==0 && age>=35){
-            v->add_voter_count(); //Decrement the number of citizens
+        }else if(strcmp(v->get_name(),voivodship_name)==0 && age>=35){
+            v->decrease_voter_count(); //Decrement the number of citizens
         }
     }
     if(age>=35){
-        Candidate* node=new Candidate(name,age,voivodship);
+        unsigned int id=this->generate_id();
+        Candidate* node=new Candidate(id,name,age,voivodship_name);
         Candidates* temp=this->headC;
         if(!temp) {
             this->headC = new Candidates();
@@ -206,9 +213,9 @@ bool Election::display_local(const char* voivodship_name){
     return false;
 }
 
-unsigned int Election::get_votes_of_candidates(const char* voivodship){
+unsigned int Election::get_votes_of_candidates(const char* voivodship_name){
     for(auto& v : this->voivodships){
-        if(strcmp(v->get_name(),voivodship)==0){
+        if(strcmp(v->get_name(),voivodship_name)==0){
             Candidates* temp=this->headC;
             int counter=0;
             while(temp){
@@ -257,12 +264,52 @@ void Election::display_voivodships(){
     cout<<endl;
 }
 
+bool Election::die_voter(unsigned int voter_id){
+    Candidates* temp=this->headC;
+    while(temp){
+        temp->candidate->delete_supporter(voter_id);
+        temp=temp->next;
+    }
+    for(auto& v : this->voivodships){
+        v->delete_voter(voter_id);
+        return true;
+    }
+    return false;
+}
+
+bool Election::die_candidate(unsigned int candidate_id){
+    if(!this->find_candidate(candidate_id)) return false;
+    Candidates* temp=this->headC;
+    Candidates* prev=nullptr;
+    while(temp){
+        if(temp->candidate->get_id()==candidate_id){
+            if(prev) prev->next=temp->next;
+            else this->headC=temp->next;
+            if(temp->candidate) delete temp->candidate;
+            if(temp) delete temp;
+            return true;
+        }
+        prev=temp;
+        temp=temp->next;
+    }
+    return false;
+}
+
+unsigned int Election::get_number_of_citizens(const char* voivodship_name){
+    for(auto& v : this->voivodships){
+        if(strcmp(v->get_name(),voivodship_name)==0){
+            return v->number_of_citizens();
+        }
+    }
+    return 0;
+}
 
 
 ostream& operator<<(ostream& os, const Candidate& candidate) {
     if(&candidate==nullptr) return os;
     os <<"\n"
     << "Candidate Name: " << candidate.get_name() << "\n"
+    << "ID: " << candidate.get_id() << "\n"
     << "Age: " << candidate.get_age()<< "\n"
     << "Voivodship: " << candidate.get_voivodship() << "\n"
     << "Support: " << candidate.support << "\n";
@@ -284,8 +331,8 @@ void Candidate::add_supporter(Voter* voter){
     }
 }
 
-Candidate::Candidate(const char* name, const unsigned int age, const char* voivodship, const bool vote, const int support)
-    : Voter(name, age, voivodship, vote), support(support), headS(nullptr) {}
+Candidate::Candidate(const unsigned int id,const char* name, const unsigned int age, const char* voivodship, const bool vote, const int support)
+    : Voter(id,name, age, voivodship, vote), support(support), headS(nullptr) {}
 
 void Candidate::free_supporters(){
     if(this==nullptr) return;
@@ -359,6 +406,24 @@ unsigned int Candidate::supporters_in_voivodship(const char* voivodship){
     return counter;
 }
 
+void Candidate::delete_supporter(unsigned int voter_id){
+    if(this==nullptr) return;
+    Supporters* temp=this->headS;
+    Supporters* prev=nullptr;
+    while(temp){
+        if(temp->voter->get_id()==voter_id){
+            if(prev) prev->next=temp->next;
+            else this->headS=temp->next;
+            if(temp->voter) delete temp->voter;
+            if(temp) delete temp;
+            return;
+        }
+        prev=temp;
+        temp=temp->next;
+    }
+}
+
+
 
 unsigned int Voter::get_age()const {
     if (this==nullptr){
@@ -387,6 +452,7 @@ bool& Voter::has_voted(){
 ostream& operator<<(ostream& os,const Voter& voter){
     if(&voter==nullptr) return os;
     os << "Voter Name: " << voter.name << "\n"
+        << "ID: " << voter.id << "\n"
        << "Age: " << voter.age<< "\n"
        << "Voivodship: " << voter.voivodship << "\n";
     return os;
@@ -400,9 +466,10 @@ char* Voter::get_name()const {
     return this->name;
 }
 
-Voter::Voter(const char* name, const unsigned int age,const char* voivodship,bool vote){
+Voter::Voter(const unsigned int id,const char* name, const unsigned int age,const char* voivodship,bool vote){
     this->name=new char[strlen(name)+1];
     strcpy(this->name,name);
+    this->id=id;
     this->age=age;
     this->voivodship=new char[strlen(voivodship)+1];
     strcpy(this->voivodship,voivodship);
@@ -428,6 +495,11 @@ void Voter::submit_vote(Candidate& candidate){
 bool Voter::get_vote()const {
     if(this==nullptr) return false;
     return this->vote;
+}
+
+unsigned int Voter::get_id()const {
+    if(this==nullptr) return 0;
+    return this->id;
 }
 
 
@@ -490,7 +562,7 @@ void Voivodship::display_voters(){
     }
 }
 
-void Voivodship::add_voter_count(){
+void Voivodship::decrease_voter_count(){
     this->citizens--;
 }
 
@@ -517,4 +589,25 @@ bool Voivodship::add_voter(Voter* voter){
     node->next = this->headV;
     this->headV = node;
     return true;
+}
+
+void Voivodship::increase_voter_count(){
+    this->citizens++;
+}
+
+void Voivodship::delete_voter(unsigned int voter_id){
+    Voters* temp=this->headV;
+    Voters* prev=nullptr;
+    while(temp){
+        if(temp->voter->get_id()==voter_id){
+            if(prev) prev->next=temp->next;
+            else this->headV=temp->next;
+            if(temp->voter) delete temp->voter;
+            if(temp) delete temp;
+            this->decrease_voter_count();
+            return;
+        }
+        prev=temp;
+        temp=temp->next;
+    }
 }
