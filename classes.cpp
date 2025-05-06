@@ -271,14 +271,13 @@ bool Election::die_voter(unsigned int voter_id){
         temp=temp->next;
     }
     for(auto& v : this->voivodships){
-        v->delete_voter(voter_id);
-        return true;
+        if(v->delete_voter(voter_id)) return true;
     }
     return false;
 }
 
-bool Election::die_candidate(unsigned int candidate_id){
-    if(!this->find_candidate(candidate_id)) return false;
+Candidate* Election::die_candidate(unsigned int candidate_id){
+    if(!this->find_candidate(candidate_id)) return this->get_candidate_node(candidate_id);
     Candidates* temp=this->headC;
     Candidates* prev=nullptr;
     while(temp){
@@ -286,13 +285,14 @@ bool Election::die_candidate(unsigned int candidate_id){
             if(prev) prev->next=temp->next;
             else this->headC=temp->next;
             if(temp->candidate) delete temp->candidate;
+            temp->candidate=nullptr;
             if(temp) delete temp;
-            return true;
+            return nullptr;
         }
         prev=temp;
         temp=temp->next;
     }
-    return false;
+    return this->get_candidate_node(candidate_id);
 }
 
 unsigned int Election::get_number_of_citizens(const char* voivodship_name){
@@ -303,6 +303,17 @@ unsigned int Election::get_number_of_citizens(const char* voivodship_name){
     }
     return 0;
 }
+
+Candidate* Election::get_candidate_node(unsigned int id){
+    Candidates* temp=this->headC;
+    while(temp){
+        if(temp->candidate->get_id()==id) return temp->candidate;
+        temp=temp->next;
+    }
+    return nullptr;
+}
+
+
 
 
 ostream& operator<<(ostream& os, const Candidate& candidate) {
@@ -483,8 +494,9 @@ Voter::~Voter(){
     }
 }
 
-void Voter::submit_vote(Candidate& candidate){
-    if(this==nullptr) return;
+void Voter::submit_vote(Election* e,Candidate& candidate){
+    if(!e->find_candidate(candidate.get_id())) return;
+    if(!this) return;
     if(!this->has_voted()){
         candidate.ref_support()++;
         this->has_voted()=true;
@@ -578,9 +590,6 @@ unsigned int Voivodship::number_of_submitted_votes(){
 
 bool Voivodship::add_voter(Voter* voter){
     Voters* temp = this->headV;
-    if(this->find(voter->get_name(), voter->get_age())) {
-        return false;
-    }
     if(this->number_of_citizens()<=this->number_of_voters()){
         return false;
     }
@@ -595,7 +604,7 @@ void Voivodship::increase_voter_count(){
     this->citizens++;
 }
 
-void Voivodship::delete_voter(unsigned int voter_id){
+bool Voivodship::delete_voter(unsigned int voter_id){
     Voters* temp=this->headV;
     Voters* prev=nullptr;
     while(temp){
@@ -605,9 +614,10 @@ void Voivodship::delete_voter(unsigned int voter_id){
             if(temp->voter) delete temp->voter;
             if(temp) delete temp;
             this->decrease_voter_count();
-            return;
+            return true;
         }
         prev=temp;
         temp=temp->next;
     }
+    return false;
 }

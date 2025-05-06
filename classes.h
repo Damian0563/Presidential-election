@@ -19,15 +19,17 @@ class Election{
         };
         Candidates* headC; //Head of the singly linked list for candidates.
 
-        //Checks if a candidate of given id
-        bool find_candidate(const unsigned int id);
         //Returns the election attendance in percantage
         double election_attendance();
+        //Returns the candidate node based on submitted id
+        Candidate* get_candidate_node(unsigned int id);
         //Returns the number of votes of candidates in a given voivodship.
         unsigned int get_votes_of_candidates(const char* voivodship_name);
     public:
         //Constructor for the election
         Election();
+        //Checks if a candidate of given id
+        bool find_candidate(const unsigned int id);
         //Adds a voivodship to the vector of voivodships.Returns true if the voivodship was added, false otherwise(there was such a voivoship already there).
         bool add_voivodship(const char* name, const unsigned int citizens); 
         //Destructor for Election class.
@@ -57,7 +59,7 @@ class Election{
         //Deletes the voter instance from all structures.
         bool die_voter(unsigned int voter_id);
         //Deletes the candidate instance from all structures.
-        bool die_candidate(unsigned int candidate_id);
+        Candidate* die_candidate(unsigned int candidate_id);
         //Generates a unique ID that is not used by any other candidate or voter.
         unsigned int generate_id();
         //Returns the number of citizens in a given voivodship.
@@ -79,7 +81,7 @@ class Voter{
         //Returns the voting status of a candidate
         bool get_vote()const;
         //Submits the vote for a candidate, increasing his backing and setting the vote submission status to true.
-        void submit_vote(Candidate& candidate);
+        void submit_vote(Election* e,Candidate& candidate);
         //Returns the age of a voter.
         unsigned int get_age()const;
         //Displays the voting status and modifies it when vote is casted.
@@ -166,7 +168,7 @@ class Voivodship{
         //Returns the number of voters that submitted their vote, not neccessarily all registered voters submitted one.
         unsigned int number_of_submitted_votes();
         //Deletes a voter from the list of voters.
-        void delete_voter(unsigned int voter_id);
+        bool delete_voter(unsigned int voter_id);
 };
 
 #endif
