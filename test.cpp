@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstring>
 #include "classes.h"
 using namespace std;
 
@@ -43,6 +44,7 @@ int main(){
     if(c2) cerr<<"Candidate Jam registered, despite being underage"<<endl;
     Candidate* c3=e->register_candidate("John", 59, "New York");
     c1=e->die_candidate(1);
+    if(strcmp(c1->get_name(),"nullptr")!=0) cerr<<"Candidate John not deleted"<<endl;
     if(e->get_number_of_citizens("Chicago")!=2) cerr<<"Voivodship Chicago citizens not decremented after candidate death"<<endl;
     Candidate* c4=e->register_candidate("Jimbo", 77, "Chicago");
     if(!c4) cerr<<"Candidate Jimbo not registered, despite being borderline"<<endl;
@@ -70,15 +72,28 @@ int main(){
     if(!v4) cerr<<"Voter Carl not registered, despite being of correct age"<<endl;
     Voter* v5=e->register_voter("Clark", 23, "Boston");
     if(!v5) cerr<<"Voter Clark not registered, despite being of correct age"<<endl;
+
+
+    Voter* v6=e->register_voter("Carl", 70, "Boston");
+    if(!v6) cerr<<"Duplicate voter not registered, borderline citizens limit"<<endl;
+    v6->submit_vote(e,*c3);
+    if(c3->ref_support()==1){
+        e->display_voters(c3); //expected carl
+        e->die_voter(v6->get_id());
+        e->display_voters(c3); //expected empty list
+        if(c3->ref_support()!=1) cerr<<"Vote revoked after voter death"<<endl;
+    }else cerr<<"Valid vote of a duplicate not casted"<<endl;
+
     v0->submit_vote(e,*c2); //Scenario3: invalid voter-invalid candidate
     if(v0->get_vote()) cerr<<"Voter v0 voted, despite being invalid"<<endl;
     v00->submit_vote(e,*c3); //Scenario3: invalid voter-valid candidate
-    if(v00->get_vote() || c3->ref_support()==1) cerr<<"Voter v00 voted, despite being invalid"<<endl;
+    if(v00->get_vote() || c3->ref_support()==2) cerr<<"Voter v00 voted, despite being invalid"<<endl;
     v1->submit_vote(e,*c1); //Scenario3: valid voter-invalid candidate
     if(v1->get_vote()) cerr<<"Voter v1 voted, despite voting on invalid candidate"<<endl;
-    // v1->submit_vote(*c3); //Scenario3: valid voter-valid candidate
-    // if(!v1->get_vote() || c3->ref_support()!=1) cerr<<"Voter v1 did not vote, despite voting on valid candidate"<<endl;
-    // e->display_voters(c3); //Samuel 1 1
+
+    v1->submit_vote(e,*c3); //Scenario3: valid voter-valid candidate
+    if(!v1->get_vote() || c3->ref_support()!=2) cerr<<"Voter v1 did not vote, despite voting on valid candidate"<<endl;
+    e->display_voters(c3); //Samuel
 
 
     return 0;

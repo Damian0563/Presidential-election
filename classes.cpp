@@ -118,7 +118,7 @@ double Election::election_attendance(){
 }
 
 unsigned int Election::generate_id(){
-    static unsigned int last_id = 0; // Keeps track of the last assigned ID
+    static unsigned int last_id = 1; // Keeps track of the last assigned ID
     return ++last_id; // Increment and return a unique ID
 }
 
@@ -139,6 +139,7 @@ Voter* Election::register_voter(const char* name, const unsigned int age,const c
 }
 
 bool Election::find_candidate(const unsigned int id){
+    if(id==0) return false;
     Candidates* temp=this->headC;
     while(temp){
         if(temp->candidate->get_id()==id) return true;
@@ -264,16 +265,23 @@ void Election::display_voivodships(){
     cout<<endl;
 }
 
-bool Election::die_voter(unsigned int voter_id){
+Voter* Election::get_voter_node(unsigned int id){
+    for(auto& v : this->voivodships){
+        if(v->get_voter(id)!=nullptr) return v->get_voter(id);
+    }
+    return nullptr;
+}
+
+Voter* Election::die_voter(unsigned int voter_id){
     Candidates* temp=this->headC;
     while(temp){
         temp->candidate->delete_supporter(voter_id);
         temp=temp->next;
     }
     for(auto& v : this->voivodships){
-        if(v->delete_voter(voter_id)) return true;
+        if(v->delete_voter(voter_id)) return this->get_voter_node(voter_id);
     }
-    return false;
+    return nullptr;
 }
 
 Candidate* Election::die_candidate(unsigned int candidate_id){
@@ -496,7 +504,7 @@ Voter::~Voter(){
 
 void Voter::submit_vote(Election* e,Candidate& candidate){
     if(!e->find_candidate(candidate.get_id())) return;
-    if(!this) return;
+    if(this->get_id()==0) return;
     if(!this->has_voted()){
         candidate.ref_support()++;
         this->has_voted()=true;
@@ -602,6 +610,15 @@ bool Voivodship::add_voter(Voter* voter){
 
 void Voivodship::increase_voter_count(){
     this->citizens++;
+}
+
+Voter* Voivodship::get_voter(unsigned int id){
+    Voters* temp=this->headV;
+    while(temp){
+        if(temp->voter->get_id()==id) return temp->voter;
+        temp=temp->next;
+    }
+    return nullptr;
 }
 
 bool Voivodship::delete_voter(unsigned int voter_id){

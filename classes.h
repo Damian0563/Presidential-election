@@ -23,6 +23,8 @@ class Election{
         double election_attendance();
         //Returns the candidate node based on submitted id
         Candidate* get_candidate_node(unsigned int id);
+        //Returns the voter node based on submitted id
+        Voter* get_voter_node(unsigned int id);
         //Returns the number of votes of candidates in a given voivodship.
         unsigned int get_votes_of_candidates(const char* voivodship_name);
     public:
@@ -57,7 +59,7 @@ class Election{
         //Displays all voivodships
         void display_voivodships();
         //Deletes the voter instance from all structures.
-        bool die_voter(unsigned int voter_id);
+        Voter* die_voter(unsigned int voter_id);
         //Deletes the candidate instance from all structures.
         Candidate* die_candidate(unsigned int candidate_id);
         //Generates a unique ID that is not used by any other candidate or voter.
@@ -169,6 +171,8 @@ class Voivodship{
         unsigned int number_of_submitted_votes();
         //Deletes a voter from the list of voters.
         bool delete_voter(unsigned int voter_id);
+        //Returns the voter node based on submitted id.
+        Voter* get_voter(unsigned int id); 
 };
 
 #endif
