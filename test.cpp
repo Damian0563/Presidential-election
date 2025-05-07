@@ -44,7 +44,7 @@ int main(){
     Candidate* c2=e->register_candidate("Jam", 20, "Boston"); //Scenario2: underage
     if(c2) cerr<<"Candidate Jam registered, despite being underage"<<endl;
     Candidate* c3=e->register_candidate("John", 59, "New York");
-    c1=e->die_candidate(2);
+    c1=e->die_candidate(c1->get_id());
     if(strcmp(c1->get_name(),"nullptr")!=0) cerr<<"Candidate John not deleted"<<endl;
     if(e->get_number_of_citizens("Chicago")!=2) cerr<<"Voivodship Chicago citizens not decremented after candidate death"<<endl;
     Candidate* c4=e->register_candidate("Jimbo", 77, "Chicago");
@@ -66,8 +66,8 @@ int main(){
     Voter* v3=e->register_voter("Samson", 18, "New York"); //Scenario1: duplicate voter
     if(!v3) cerr<<"Voter Samson registered, despite being duplicate"<<endl;
     e->display_registered_voters("New York"); //Samuel, Samson, Samson 3 3
-    v3=e->die_voter(v3->get_id());
-    e->display_registered_voters("New York"); //Samuel, Samson ids 5 and 6 2 2
+    e->die_voter(v3->get_id());
+    e->display_registered_voters("New York"); //Samuel, Samson ids 5 and 6 Samson id 0 2 2
     
     Voter* v4=e->register_voter("Carl", 70, "Boston"); //Scenario1: correct age
     if(!v4) cerr<<"Voter Carl not registered, despite being of correct age"<<endl;

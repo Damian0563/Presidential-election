@@ -272,13 +272,12 @@ Voter* Election::get_voter_node(unsigned int id){
     return nullptr;
 }
 
-Voter* Election::die_voter(unsigned int voter_id){
+void Election::die_voter(unsigned int voter_id){
     Voter* voter=this->get_voter_node(voter_id);
     for(auto& v:this->voivodships){
         if(v->find(voter_id) && !voter->has_voted()) v->decrease_voter_count();
     }
     if(voter) voter->refId()=0;
-    return voter;
 }
 
 Candidate* Election::die_candidate(unsigned int candidate_id){
@@ -475,7 +474,7 @@ ostream& operator<<(ostream& os,const Voter& voter){
 }
 
 char* Voter::get_name()const {
-    if (this==nullptr){
+    if (!this){
         static char* x = const_cast<char*>("nullptr"); 
         return x;
     }
@@ -552,7 +551,7 @@ unsigned int Voivodship::number_of_voters(){
     unsigned int counter=0;
     Voters* temp=this->headV;
     while(temp){
-        counter++;
+        if(temp->voter->get_id()!=0 && !temp->voter->get_vote()) counter++;
         temp=temp->next;
     }
     return counter;

@@ -61,7 +61,7 @@ class Election{
         //Displays all voivodships
         void display_voivodships();
         //Deletes the voter instance from all structures.
-        Voter* die_voter(unsigned int voter_id);
+        void die_voter(unsigned int voter_id);
         //Deletes the candidate instance from all structures.
         Candidate* die_candidate(unsigned int candidate_id);
         //Returns the number of citizens in a given voivodship.
