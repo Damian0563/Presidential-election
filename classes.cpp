@@ -48,11 +48,11 @@ void Election::determine_winner(){
         }
         temp=this->headC;
         double percantage;
-        cout<<endl<<"Winner: "<<winner->get_name()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
+        cout<<endl<<"Winner: "<<winner->get_name()<<" of ID: "<<winner->get_id()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
         while(temp){
-            if(strcmp(winner->get_name(),temp->candidate->get_name())!=0){
+            if(winner->get_id()!=temp->candidate->get_id()){
                 percantage=((temp->candidate->ref_support())*100)/total;
-                cout<<temp->candidate->get_name()<<", support: "<<percantage<<"%"<<endl;
+                cout<<temp->candidate->get_name()<<" of ID: "<<temp->candidate->get_id()<<", support: "<<percantage<<"%"<<endl;
             }
             temp=temp->next;
         }
@@ -74,7 +74,7 @@ void Election::support_by_age_group(){
             middle_aged=age_dist[1];
             elders=age_dist[2];
             
-            cout<<temp->candidate->get_name()<<": "<<endl;
+            cout<<temp->candidate->get_name()<<" with ID "<<temp->candidate->get_id()<<": "<<endl;
             cout<<"\tYoung adults: "<<(young_adults*100)/total<<"%"<<endl;
             cout<<"\tMiddle aged: "<<(middle_aged*100)/total<<"%"<<endl;
             cout<<"\tElders: "<<(elders*100)/total<<"%"<<endl;
@@ -111,8 +111,8 @@ double Election::election_attendance(){
         }
         temp=this->headC;
     }
-    // cout<<endl<<"Total number of citizens: "<<population<<endl;
-    // cout<<"Total number of voters: "<<voters<<endl;
+    cout<<endl<<"Total number of citizens: "<<population<<endl;
+    cout<<"Total number of voters: "<<voters<<endl;
     double percantage=(voters*100)/population;
     return percantage;
 }
@@ -205,7 +205,7 @@ bool Election::display_local(const char* voivodship_name){
                     increment1++;
                 }
                 //cout<<temp->candidate->supporters_in_voivodship(voivodship_name)<<"+"<<increment1<<", "<<v->number_of_submitted_votes()<<"+"<<increment2<<endl;
-                cout<<temp->candidate->get_name()<<": "<<(double(temp->candidate->supporters_in_voivodship(voivodship_name)+increment1)*100)/double(v->number_of_submitted_votes()+increment2)<<"%"<<endl;
+                cout<<temp->candidate->get_name()<<" of ID "<<temp->candidate->get_id()<<": "<<(double(temp->candidate->supporters_in_voivodship(voivodship_name)+increment1)*100)/double(v->number_of_submitted_votes()+increment2)<<"%"<<endl;
                 temp=temp->next;
             }
             return true;
@@ -273,15 +273,12 @@ Voter* Election::get_voter_node(unsigned int id){
 }
 
 Voter* Election::die_voter(unsigned int voter_id){
-    Candidates* temp=this->headC;
-    while(temp){
-        temp->candidate->delete_supporter(voter_id);
-        temp=temp->next;
+    Voter* voter=this->get_voter_node(voter_id);
+    for(auto& v:this->voivodships){
+        if(v->find(voter_id) && !voter->has_voted()) v->decrease_voter_count();
     }
-    for(auto& v : this->voivodships){
-        if(v->delete_voter(voter_id)) return this->get_voter_node(voter_id);
-    }
-    return nullptr;
+    if(voter) voter->refId()=0;
+    return voter;
 }
 
 Candidate* Election::die_candidate(unsigned int candidate_id){
@@ -426,7 +423,7 @@ unsigned int Candidate::supporters_in_voivodship(const char* voivodship){
 }
 
 void Candidate::delete_supporter(unsigned int voter_id){
-    if(this==nullptr) return;
+    if(!this) return;
     Supporters* temp=this->headS;
     Supporters* prev=nullptr;
     while(temp){
@@ -522,6 +519,11 @@ unsigned int Voter::get_id()const {
     return this->id;
 }
 
+unsigned int& Voter::refId(){
+    if(!this) return id;
+    return this->id;
+}
+
 
 
 Voivodship::Voivodship(const char* name, const unsigned int citizens){
@@ -537,12 +539,10 @@ Voivodship::~Voivodship(){
 
 char* Voivodship::get_name(){return this->name;}
 
-bool Voivodship::find(const char* name, const unsigned int age) {
+bool Voivodship::find(const unsigned int id) {
     Voters* temp=this->headV;
     while(temp){
-        if(strcmp(temp->voter->get_name(), name)==0 && temp->voter->get_age()==age) {
-            return true;
-        }
+        if(temp->voter->get_id()==id) return true;
         temp=temp->next;
     }
     return false;

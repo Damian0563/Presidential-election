@@ -27,6 +27,8 @@ class Election{
         Voter* get_voter_node(unsigned int id);
         //Returns the number of votes of candidates in a given voivodship.
         unsigned int get_votes_of_candidates(const char* voivodship_name);
+        //Generates a unique ID that is not used by any other candidate or voter.
+        unsigned int generate_id();
     public:
         //Constructor for the election
         Election();
@@ -62,8 +64,6 @@ class Election{
         Voter* die_voter(unsigned int voter_id);
         //Deletes the candidate instance from all structures.
         Candidate* die_candidate(unsigned int candidate_id);
-        //Generates a unique ID that is not used by any other candidate or voter.
-        unsigned int generate_id();
         //Returns the number of citizens in a given voivodship.
         unsigned int get_number_of_citizens(const char* voivodship_name);
 };
@@ -96,6 +96,8 @@ class Voter{
         char* get_voivodship()const;
         //Returns the ID of a voter
         unsigned int get_id()const;
+        //Reference for id variable
+        unsigned int& refId();
 };
 
 //Candidate inherits from Voter class as candidates do have the voting rights, despite part-taking in an election.
@@ -108,7 +110,6 @@ class Candidate:public Voter{
             Supporters* next; //Next supporters instance.
         };
         Supporters* headS; //Head of the supporters structure.
-
         //Frees the list of supporters
         void free_supporters(); 
     public:
@@ -152,7 +153,7 @@ class Voivodship{
         //Destructor for voivodship object.
         ~Voivodship();
         //Iterates thorugh singly linked list and returns boolean value indicating presence of a voter in those who voted.
-        bool find(const char* name,const unsigned int age);
+        bool find(const unsigned int id);
         //Returns the number of all registered voters.
         unsigned int number_of_voters();
         //Decreases the number of citizens by one. In the case of death/ Candidate registration.
