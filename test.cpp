@@ -26,6 +26,7 @@ R7. Candidates and Voters can die, if a vote was casted before death, the vote i
     4. Election attendance: ensure that candidates are taken into consideration.
     5. Determining support(global,local,...etc.): ensure candidates' votes are counted alongside 'regular' voters.
     6. Handling of empty lists: ensure that no seg faults occur when trying to access INVALID NODES.
+    7. Dying mechanic: ensure that dead candidates/voters are sterilized(they do not posses the rigth to fullfil their functionality anymore)
 */
 
 
@@ -44,8 +45,7 @@ int main(){
     Candidate* c2=e->register_candidate("Jam", 20, "Boston"); //Scenario2: underage
     if(c2) cerr<<"Candidate Jam registered, despite being underage"<<endl;
     Candidate* c3=e->register_candidate("John", 59, "New York");
-    c1=e->die_candidate(c1->get_id());
-    if(strcmp(c1->get_name(),"nullptr")!=0) cerr<<"Candidate John not deleted"<<endl;
+    e->die_candidate(c1->get_id());
     if(e->get_number_of_citizens("Chicago")!=2) cerr<<"Voivodship Chicago citizens not decremented after candidate death"<<endl;
     Candidate* c4=e->register_candidate("Jimbo", 77, "Chicago");
     if(!c4) cerr<<"Candidate Jimbo not registered, despite being borderline"<<endl;
@@ -100,18 +100,18 @@ int main(){
     c4->submit_vote();
     c5->submit_vote();
     e->display_registered_candidates();
-    e->determine_winner(); //Expected John ID 3 57.14%, Jimbo ID 4 28.57%, Jimbo ID 5 14.28%
+    e->determine_winner(); //Expected John ID 3 57.14%, Jimbo ID 4 28.57%, Jimbo ID 5 14.28%   Scenario 5
     //Election attendance: 87.5%. There were ten citizens initially, all citizens
     //Were deemed voters at some point in time. 
     //Three died, but one of them(v6) did only after voting, so he was counted into the election attendance.
     //There were 8 voters of which 3 candidates and of the candidates has not voted(c3).
     //The attendance is 7/8*100%=87.5% Scenario 4
 
-    e->support_by_age_group();
+    e->support_by_age_group(); //Scenario 5
     //Jimbo id 5 100% elders
     //Jimbo id 4 50% elders 50% young adults
     //John id 3 25% young adults 25% middle aged 50% elders
-    e->display_local("New York"); //50% John id 3 50% Jimbo id 4
+    e->display_local("New York"); //50% John id 3 50% Jimbo id 4    //Scenario 5
     e->display_local("Boston"); //100% John id 3
     e->display_local("Chicago"); //50% Jimbo id 4 50% Jimbo id 5
 

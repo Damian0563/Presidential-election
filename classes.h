@@ -2,7 +2,6 @@
 #define CLASSES_H
 #include <vector>
 #include <iostream>
-#include <map>
 using namespace std;
 
 class Candidate;
@@ -63,7 +62,7 @@ class Election{
         //Deletes the voter instance from all structures.
         void die_voter(unsigned int voter_id);
         //Deletes the candidate instance from all structures.
-        Candidate* die_candidate(unsigned int candidate_id);
+        void die_candidate(unsigned int candidate_id);
         //Returns the number of citizens in a given voivodship.
         unsigned int get_number_of_citizens(const char* voivodship_name);
 };
