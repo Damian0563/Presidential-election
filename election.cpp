@@ -9,13 +9,13 @@ Election::Election(){
     this->headC=nullptr;
 }
 
-bool Election::add_voivodship(const char* name, const unsigned int citizens){
+bool Election::add_voivodship(const char* voivodship_name, const unsigned int citizens){
     for (auto& v : this->voivodships) {
-        if (strcmp(v->get_name(), name) == 0) {
+        if (strcmp(v->get_name(), voivodship_name) == 0) {
             return false;
         }
     }
-    Voivodship* node=new Voivodship(name,citizens);
+    Voivodship* node=new Voivodship(voivodship_name,citizens);
     this->voivodships.push_back(node);
     return true;
 }
