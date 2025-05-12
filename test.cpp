@@ -20,7 +20,7 @@ R7. Candidates and Voters can die, if a vote was casted before death, the vote i
 
 /*
     IMPORTANT SCENARIOS TO CHECK:
-    1. Voter registration: underage, correct age, citizens limit reached.
+    1. Voter registration: underage, correct age, citizens limit reached, in a non-existing voivodship.
     2. Candidate registration: underage, correct age, citizens limit reached.   
     3. Vote submission: valid voter-valid candidate, valid voter-invalid candidate, invalid voter-valid candidate, invalid voter-invalid candidate.
     4. Election attendance: ensure that candidates are taken into consideration.
@@ -55,6 +55,8 @@ int main(){
     if(c0) cerr<<"Candidate registered, over the limit"<<endl; //Scenario2: citizens limit reached
     e->display_registered_candidates(); //John, Jimbo, Jimbo
 
+    Voter* v000=e->register_voter("Jasmine",27,"Toronoto"); //Scenario1: non-existing voivodship
+    if(v000) cerr<<"Voter Jasmine registered, despite being in a non-existing voivodship"<<endl;
     Voter* v0=e->register_voter("Samuel", 54, "Chicago");//Scenario1: citizens limit reached
     Voter* v00=e->register_voter("Sema", 17, "New York"); //Scenario1: underage
     if(v00) cerr<<"Voter Sema registered, despite being underage"<<endl;
@@ -114,6 +116,18 @@ int main(){
     e->display_local("New York"); //50% John id 3 50% Jimbo id 4    //Scenario 5
     e->display_local("Boston"); //100% John id 3
     e->display_local("Chicago"); //50% Jimbo id 4 50% Jimbo id 5
+
+
+    Election *empty=new Election();
+    empty->determine_winner(); //expected no candidates registered
+    empty->support_by_age_group();// expected no candidates registered, can not display support by age group
+    empty->display_registered_candidates(); //expected no candidates registered
+    empty->display_registered_voters("New Orleans");//expected No voters in a non-existant voivodship.
+    empty->display_local("New Orleans"); //expected Voivodship not found
+    empty->display_voters(c4);//exoected Candidate not registered for this election
+    empty->die_candidate(3);// expected Candidate not registered for this election
+    empty->die_voter(6);// expected Voter not registered for this election
+    
 
     return 0;
 }

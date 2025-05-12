@@ -29,6 +29,8 @@ class Election{
         unsigned int get_votes_of_candidates(const char* voivodship_name);
         //Generates a unique ID that is not used by any other candidate or voter.
         unsigned int generate_id();
+        //Displays the results of the election, including the winner and their support in percentages.
+        void print_results(Candidate* winner,double total_votes);
     public:
         Election();
         ~Election();

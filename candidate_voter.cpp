@@ -34,13 +34,6 @@ Candidate::Candidate(const unsigned int id,const char* name, const unsigned int 
 
 void Candidate::free_supporters(){
     if(!this) return;
-    Supporters* current=this->headS;
-    while (current!=nullptr) {
-        Supporters* temp=current;
-        current=current->next;
-        if(temp->voter) delete temp->voter;
-        delete temp;
-    }
     this->headS=nullptr;
 }
 

@@ -30,6 +30,11 @@ Election::~Election(){
         delete temp;         
     }
     this->headC = nullptr;
+    if(!this->voivodships.empty()){
+        for (auto& v : this->voivodships) {
+            if(v) delete v;
+        }
+    }
 }
 
 void Election::determine_winner(){
@@ -48,18 +53,22 @@ void Election::determine_winner(){
             }
             temp=temp->next;
         }
-        temp=this->headC;
-        double percantage;
-        cout<<endl<<"Winner: "<<winner->get_name()<<" of ID: "<<winner->get_id()<<" gets "<<(max*100)/total<<"%"<<" support in general election."<<endl;
-        while(temp){
-            if(temp->candidate->get_id()!=0 && winner->get_id()!=temp->candidate->get_id()){
-                percantage=((temp->candidate->ref_support())*100)/total;
-                cout<<temp->candidate->get_name()<<" of ID: "<<temp->candidate->get_id()<<", support: "<<percantage<<"%"<<endl;
-            }
-            temp=temp->next;
-        }
-        cout<<"Election attendance: "<<this->election_attendance()<<"%"<<endl;
+        this->print_results(winner,total);
     }else cout<<endl<<"No candidates registered"<<endl;
+}
+
+void Election::print_results(Candidate* winner,double total_votes){
+    Candidates* temp=this->headC;
+    double percantage;
+    cout<<endl<<"Winner: "<<winner->get_name()<<" of ID: "<<winner->get_id()<<" gets "<<(winner->ref_support()*100)/total_votes<<"%"<<" support in general election."<<endl;
+    while(temp){
+        if(temp->candidate->get_id()!=0 && winner->get_id()!=temp->candidate->get_id()){
+            percantage=((temp->candidate->ref_support())*100)/total_votes;
+            cout<<temp->candidate->get_name()<<" of ID: "<<temp->candidate->get_id()<<", support: "<<percantage<<"%"<<endl;
+        }
+        temp=temp->next;
+    }
+    cout<<"Election attendance: "<<this->election_attendance()<<"%"<<endl;
 }
 
 void Election::support_by_age_group(){
@@ -90,7 +99,7 @@ void Election::support_by_age_group(){
 void Election::display_registered_candidates(){
     Candidates* temp=this->headC;
     if(!temp) cout<<"No candidates registered"<<endl;
-    else cout<<endl<<"Registered candidates: "<<endl;
+    else cout<<endl<<"Registered candidates: ";
     while(temp){
         if(temp->candidate->get_id()!=0) cout<<*(temp->candidate);
         temp=temp->next;
@@ -101,19 +110,25 @@ double Election::election_attendance(){
     double population=0;
     double voters=0;
     Candidates* temp=this->headC;
+    if(this->voivodships.empty()){
+        cout<<"No voivodships registered"<<endl;
+        return 0;
+    }
     for(auto& voivodship : this->voivodships){
-        population+=voivodship->number_of_citizens();
-        voters+=voivodship->number_of_submitted_votes();
-        while(temp){
-            if(temp->candidate->get_id()!=0 && strcmp(temp->candidate->get_voivodship(),voivodship->get_name())==0){
-                if(temp->candidate->has_voted()){
-                    voters++;
+        if(voivodship){
+            population+=voivodship->number_of_citizens();
+            voters+=voivodship->number_of_submitted_votes();
+            while(temp){
+                if(temp->candidate->get_id()!=0 && strcmp(temp->candidate->get_voivodship(),voivodship->get_name())==0){
+                    if(temp->candidate->has_voted()){
+                        voters++;
+                    }
+                    population++;
                 }
-                population++;
+                temp=temp->next;
             }
-            temp=temp->next;
+            temp=this->headC;
         }
-        temp=this->headC;
     }
     cout<<endl<<"Total number of citizens: "<<population<<endl;
     cout<<"Total number of voters: "<<voters<<endl;
@@ -195,6 +210,7 @@ bool Election::display_registered_voters(const char* voivodship_name){
             return true;
         }
     }
+    cout<<"No voters in a non-existant voivodship."<<endl;
     return false;
 }
 
@@ -217,6 +233,7 @@ bool Election::display_local(const char* voivodship_name){
             return true;
         }
     }
+    cout<<"Voivodship not found"<<endl;
     return false;
 }
 
@@ -261,7 +278,11 @@ bool Election::local_support(const Candidate* candidate,const char* voivodship_n
 }
 
 void Election::display_voters(const Candidate* candidate){
-    candidate->display_supporters();
+    if(candidate){
+        if(!this->find_candidate(candidate->get_id())){
+            cout<<"Candidate not registered for this election"<<endl;
+        }else{ candidate->display_supporters();}
+    }
 }
 
 void Election::display_voivodships(){
@@ -280,14 +301,21 @@ Voter* Election::get_voter_node(unsigned int id){
 
 void Election::die_voter(unsigned int voter_id){
     Voter* voter=this->get_voter_node(voter_id);
-    for(auto& v:this->voivodships){
-        if(v->find(voter_id) && !voter->has_voted()) v->decrease_voter_count();
+    if(voter){
+        for(auto& v:this->voivodships){
+            if(v->find(voter_id) && !voter->has_voted()) v->decrease_voter_count();
+        }
+        voter->refId()=0;
+        return;
     }
-    if(voter) voter->refId()=0;
+    cout<<"Voter not registered for this election"<<endl;
 }
 
 void Election::die_candidate(unsigned int candidate_id){
-    if(!this->find_candidate(candidate_id)) return;
+    if(!this->find_candidate(candidate_id)) {
+        cout<<"Candidate not registered for this election"<<endl;
+        return;
+    }
     Candidates* temp=this->headC;
     while(temp){
         if(temp->candidate->get_id()==candidate_id){
