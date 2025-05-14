@@ -21,7 +21,7 @@ bool Election::add_voivodship(const char* voivodship_name, const unsigned int ci
 }
 
 Election::~Election(){
-    if(this==nullptr) return;
+    if(!this) return;
     Candidates* current = this->headC;
     while (current != nullptr) {
         Candidates* temp = current;
@@ -168,14 +168,16 @@ bool Election::find_candidate(const unsigned int id){
 }
 
 Candidate* Election::register_candidate(const char* name, const unsigned int age, const char* voivodship_name){
+    bool flag=false;
     for(auto& v:this->voivodships){
         if(strcmp(v->get_name(),voivodship_name)==0 && v->number_of_citizens()<=v->number_of_voters()){ //Candidate can not be registered if the number of citizens is less than the number of voters
             return nullptr; 
         }else if(strcmp(v->get_name(),voivodship_name)==0 && age>=35){
             v->decrease_voter_count(); //Decrement the number of citizens
+            flag=true;
         }
     }
-    if(age>=35){
+    if(age>=35 && flag){
         unsigned int id=this->generate_id();
         Candidate* node=new Candidate(id,name,age,voivodship_name);
         Candidates* temp=this->headC;
@@ -193,6 +195,7 @@ Candidate* Election::register_candidate(const char* name, const unsigned int age
         temp->next->next = nullptr;
         return node;
     }
+    if(!flag) cout<<"Candidate tried to be registered under non existant voivodship"<<endl;
     return nullptr;
 }
 

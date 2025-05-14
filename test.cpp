@@ -127,6 +127,11 @@ int main(){
     empty->display_voters(c4);//exoected Candidate not registered for this election
     empty->die_candidate(3);// expected Candidate not registered for this election
     empty->die_voter(6);// expected Voter not registered for this election
+    empty->display_all_voters();// expected No voivodships and candidates registered
+    cerr<<empty->get_number_of_citizens("New Orleans")<<endl;// expected 0
+    v2->has_voted()=false;
+    v2->submit_vote(empty,*c3);
+    if(v2->get_vote()) cerr<<"Voter v2 voted, despite being non-existing in a election"<<endl;
     
 
     return 0;
