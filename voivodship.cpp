@@ -52,7 +52,8 @@ void Voivodship::free_voters(){
 
 void Voivodship::display_voters(){
     Voters* temp=this->headV;
-    cout<<endl<<this->name<<" voters: "<<endl;
+    if(temp) cout<<endl<<this->name<<" voters: "<<endl;
+    else cout<<"No voters in "<<this->name<<endl;
     while(temp){
         cout<<*(temp->voter);
         temp=temp->next;

@@ -38,7 +38,7 @@ void Candidate::free_supporters(){
 }
 
 void Candidate::submit_vote(){
-    if(!this) return;
+    if(!this || this->get_id()==0) return;
     ref_support()++;
     this->has_voted()=true;
 }
@@ -175,7 +175,7 @@ Voter::~Voter(){
 }
 
 void Voter::submit_vote(Election* e,Candidate& candidate){
-    if(!e->find_candidate(candidate.get_id())) return;
+    if(!&candidate || !e->find_candidate(candidate.get_id())) return;
     if(this->get_id()==0) return;
     if(!this->has_voted()){
         candidate.ref_support()++;

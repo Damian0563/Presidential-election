@@ -134,5 +134,80 @@ int main(){
     if(v2->get_vote()) cerr<<"Voter v2 voted, despite being non-existing in a election"<<endl;
     
 
+    cout<<endl;
+    Election* ee=new Election();
+    ee->add_voivodship("Berlin",10);
+    ee->add_voivodship("Frankfurt",14);
+    ee->display_voivodships(); //Expected: Berlin, Frankfurt
+    Candidate* c11=ee->register_candidate("John Pork",50,"Frankfurt");
+    if(!c11) cerr<<"Valid candidate not registered"<<endl;
+    Candidate* c111=ee->register_candidate("Simon Claw",20,"Frankfurt");
+    if(c111) cerr<<"Candidate of invalid age registered"<<endl;
+    Candidate* c22=ee->register_candidate("Eric From",79,"Berlin");
+    if(!c22) cerr<<"Valid candidate not registered"<<endl;
+
+    Voter* v11=ee->register_voter("Clark Simpson",22,"Berlin");
+    if(!v11) cerr<<"Valid voter not registered"<<endl;
+    Voter* v22=ee->register_voter("Carl Simpson",42,"Berlin");
+    if(!v22) cerr<<"Valid voter not registered"<<endl;
+    Voter* v33=ee->register_voter("Cambridge Smith",33,"Frankfurt");
+    if(!v33) cerr<<"Valid voter not registered"<<endl;
+    Voter* v44=ee->register_voter("Calum Bridgeton",74,"Frankfurt");
+    if(!v44) cerr<<"Valid voter not registered"<<endl;
+    Voter* v55=ee->register_voter("Mohammed Karim",19,"Berlin");
+    if(!v55) cerr<<"Valid voter not registered"<<endl;
+    Voter* v66=ee->register_voter("Ben White",20,"Berlin");
+    if(!v66) cerr<<"Valid voter not registered"<<endl;
+    Voter* v77=ee->register_voter("Jasmine Blank",22,"Frankfurt");
+    if(!v77) cerr<<"Valid voter not registered"<<endl;
+    Voter* v88=ee->register_voter("Jack Sparrow",62,"Frankfurt");
+    if(!v88) cerr<<"Valid voter not registered"<<endl;
+    Voter* v99=ee->register_voter("Jack Black",49,"Berlin");
+    if(!v99) cerr<<"Valid voter not registered"<<endl;
+    Voter* v100=ee->register_voter("Jack White",90,"Berlin");
+    if(!v100) cerr<<"Valid voter not registered"<<endl;
+
+    c11->submit_vote();
+    if(c11->ref_support()!=1) cerr<<"Vote not casted by a candidate"<<endl;
+    c22->submit_vote();
+    if(c22->ref_support()!=1) cerr<<"Vote not casted by a candidate"<<endl;
+    v11->submit_vote(ee,*c11);
+    if(!v11->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c11->ref_support()!=2) cerr<<"Vote not casted by a voter"<<endl;
+    v22->submit_vote(ee,*c22);
+    if(!v22->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c22->ref_support()!=2) cerr<<"Vote not casted by a voter"<<endl;
+    v33->submit_vote(ee,*c11);
+    if(!v33->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    ee->die_voter(v33->get_id());
+    ee->die_voter(v44->get_id());
+    v55->submit_vote(ee,*c11);
+    if(!v55->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c11->ref_support()!=4) cerr<<"Vote not casted by a voter"<<endl;
+    v66->submit_vote(ee,*c22);
+    if(!v66->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c22->ref_support()!=3) cerr<<"Vote not casted by a voter"<<endl;
+    v77->submit_vote(ee,*c11);
+    if(!v77->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c11->ref_support()!=5) cerr<<"Vote not casted by a voter"<<endl;
+    v88->submit_vote(ee,*c22);
+    if(!v88->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c22->ref_support()!=4) cerr<<"Vote not casted by a voter"<<endl;
+    v99->submit_vote(ee,*c11);
+    if(!v99->get_vote()) cerr<<"Voter voted, but status not changed"<<endl;
+    if(c11->ref_support()!=6) cerr<<"Vote not casted by a voter"<<endl;
+
+    ee->display_registered_candidates(); //Expected: John Pork, Eric From
+    c11->display_supporters(); //Expected: Clark Simpson, Cambridge Smith(id 0-dead), Mohammed Karim, Jasmine Blank, Jack Black
+    c22->display_supporters(); //Expected: Carl Simpson, Ben White, Jack Sparrow
+    ee->determine_winner(); //Expected: John Pork 6 54.54%, Eric From 4 36.36% Scenario 5 43.47% attendance
+
+    ee->support_by_age_group(); //Expected: John Pork 66.66% young adults, 33.33% middle aged, 0% elders
+    //Expected: Eric From 25% young adults, 50% middle aged, 25% elders
+    ee->display_local("Berlin"); //Expected: John Pork  50%        Eric From 50%
+    ee->display_local("Frankfurt"); //Expected: John Pork 75%      Eric From 25%
+
+
+
     return 0;
 }

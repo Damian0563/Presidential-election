@@ -195,7 +195,6 @@ Candidate* Election::register_candidate(const char* name, const unsigned int age
         temp->next->next = nullptr;
         return node;
     }
-    if(!flag) cout<<"Candidate tried to be registered under non existant voivodship"<<endl;
     return nullptr;
 }
 
