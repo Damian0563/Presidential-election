@@ -11,12 +11,20 @@ Voivodship::Voivodship(const char* name, const unsigned int citizens){
 }
 
 Voivodship::~Voivodship(){
+    if(!this) return;
     this->free_voters();
 }
 
-char* Voivodship::get_name(){return this->name;}
+char* Voivodship::get_name(){
+     if (!this){
+        static char* x = const_cast<char*>("nullptr"); 
+        return x;
+    }
+    return this->name;
+}
 
 bool Voivodship::find(const unsigned int id) {
+    if(!this) return false;
     Voters* temp=this->headV;
     while(temp){
         if(temp->voter->get_id()==id) return true;
@@ -26,6 +34,7 @@ bool Voivodship::find(const unsigned int id) {
 }
 
 unsigned int Voivodship::number_of_voters(){
+    if(!this) return 0;
     unsigned int counter=0;
     Voters* temp=this->headV;
     while(temp){
@@ -36,10 +45,12 @@ unsigned int Voivodship::number_of_voters(){
 }
 
 unsigned int Voivodship::number_of_citizens(){
+    if(!this) return 0;
     return this->citizens;
 }
 
 void Voivodship::free_voters(){
+    if(!this) return;
     Voters* current=this->headV;
     while (current!=nullptr) {
         Voters* temp=current;
@@ -51,6 +62,7 @@ void Voivodship::free_voters(){
 }
 
 void Voivodship::display_voters(){
+    if(!this) return;
     Voters* temp=this->headV;
     if(temp) cout<<endl<<this->name<<" voters: "<<endl;
     else cout<<"No voters in "<<this->name<<endl;
@@ -61,10 +73,12 @@ void Voivodship::display_voters(){
 }
 
 void Voivodship::decrease_voter_count(){
+    if(!this) return;
     this->citizens--;
 }
 
 unsigned int Voivodship::number_of_submitted_votes(){
+    if(!this) return 0;
     unsigned int counter=0;
     Voters* temp=this->headV;
     while(temp){
@@ -75,6 +89,7 @@ unsigned int Voivodship::number_of_submitted_votes(){
 }
 
 bool Voivodship::add_voter(Voter* voter){
+    if(!this || !voter) return false;
     Voters* temp = this->headV;
     if(this->number_of_citizens()<=this->number_of_voters()){
         return false;
@@ -87,10 +102,12 @@ bool Voivodship::add_voter(Voter* voter){
 }
 
 void Voivodship::increase_voter_count(){
+    if(!this) return;
     this->citizens++;
 }
 
 Voter* Voivodship::get_voter(unsigned int id){
+    if(!this) return nullptr;
     Voters* temp=this->headV;
     while(temp){
         if(temp->voter->get_id()==id) return temp->voter;
@@ -100,6 +117,7 @@ Voter* Voivodship::get_voter(unsigned int id){
 }
 
 bool Voivodship::delete_voter(unsigned int voter_id){
+    if(!this || !voter_id) return false;
     Voters* temp=this->headV;
     Voters* prev=nullptr;
     while(temp){

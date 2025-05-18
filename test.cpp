@@ -207,7 +207,37 @@ int main(){
     ee->display_local("Berlin"); //Expected: John Pork  50%        Eric From 50%
     ee->display_local("Frankfurt"); //Expected: John Pork 75%      Eric From 25%
 
+    //Segmentation fault tests- expected no segmentation faults in the console
+    Voter* temp=nullptr;
+    temp->get_age();
+    temp->get_id();
+    temp->get_name();
+    temp->get_voivodship();
+    temp->submit_vote(ee,*c11);
+    temp->get_vote();
+    temp->has_voted();
+    temp->refId();
 
+    Candidate* temp2=nullptr;
+    temp2->ref_support();
+    temp2->supporters_in_voivodship("test");
+    temp2->display_supporters();
+    temp2->add_supporter(temp);
+    temp2->submit_vote();
+    temp2->delete_supporter(0);
+
+    Voivodship* temp3=nullptr;
+    temp3->get_name();
+    temp3->add_voter(v11);
+    temp3->decrease_voter_count();
+    temp3->delete_voter(v11->get_id());
+    temp3->display_voters();
+    temp3->find(v11->get_id());
+    temp3->get_voter(v11->get_id());
+    temp3->increase_voter_count();
+    temp3->number_of_citizens();
+    temp3->number_of_submitted_votes();
+    temp3->number_of_voters();
 
     return 0;
 }
